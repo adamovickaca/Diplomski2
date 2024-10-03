@@ -12,6 +12,7 @@ import majstorRoute from './routes/majstorRoute.js';
 import poddelatnostRoute from './routes/poddelatnostRoute.js';
 import recenzijaRoute from './routes/recenzijaRoutes.js';
 import rezervacijaRoute from './routes/rezervacijaRoutes.js';
+import blogRoute from "./routes/blogRoute.js";
 
 //ucitava konfiguraciju iz .env datoteke
 dotenv.config();
@@ -49,6 +50,7 @@ app.use('/api/v2/majstori', majstorRoute);
 app.use('/api/v2/poddelatnosti', poddelatnostRoute);
 app.use('/api/v2/recenzije', recenzijaRoute);
 app.use('/api/v2/rezervacije', rezervacijaRoute);
+app.use('/api/v2/blogovi', blogRoute);
 
 //Pokreće server i sluša zahteve na određenom portu
 app.listen(port, ()=>{

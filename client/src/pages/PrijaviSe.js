@@ -1,17 +1,24 @@
-import React from "react";
-import {
-  Box,
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Grid2,
-} from "@mui/material";
+import React, { useState, useContext } from "react";
+import { Box, TextField, Button, Typography, Grid } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { NavLink } from "react-router-dom";
-import pozadina from "../assets/images/pozadina.jpeg";
+import { NavLink, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../config.js";
+import { toast } from "react-toastify";
+import {authContext} from '../context/authContext.js';
 
 const PrijaviSe = () => {
+
+  const [formData, setFormData] = useState({
+    email: "",
+    sifra: "",
+  });
+  const navigate = useNavigate();
+  const {dispatch} = useContext(authContext)
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const textFieldStyles = {
     "& .MuiOutlinedInput-root": {
       "& fieldset": {
@@ -21,23 +28,61 @@ const PrijaviSe = () => {
         borderColor: "#999",
       },
       "&.Mui-focused fieldset": {
-        borderColor: "##1A1C20",
+        borderColor: "#1A1C20",
       },
     },
     "& .MuiInputLabel-root": {
-      color: "#1A1C20", // Postavlja boju labela
+      color: "#1A1C20",
     },
     "& .MuiInputLabel-root.Mui-focused": {
-      color: "#1A1C20", // Postavlja boju kada je polje fokusirano
+      color: "#1A1C20",
     },
   };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    if (!formData.email || !formData.sifra) {
+      toast.error("Morate popuniti sva obavezna polja.");
+      return;
+    }
+    try {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+
+      dispatch({
+        type:"LOGIN_SUCCESS",
+        payload:{
+          user: result.data,
+          token: result.token,
+          role: result.role,
+        },
+      });
+      console.log(result, "login data")
+
+      toast.success(result.message);
+      navigate("/pocetna");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <Box
       sx={{
-        minHeight: "100vh", // Postavljanje visine na 100vh
-        display: 'flex', // Flex za centriranje sadržaja
-        alignItems: 'center', // Vertikalno centriranje
-        justifyContent: 'center', // Horizontalno centriranje
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Box
@@ -45,46 +90,55 @@ const PrijaviSe = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          backdropFilter: "blur(10px)", // Zamagljivanje pozadine
-          backgroundColor: "rgba(255, 255, 255, 0.8)", // Poluprovidna bela pozadina
+          backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
           borderRadius: "1rem",
           padding: "2rem",
-          boxShadow: 3, // Dodavanje senke
-          maxWidth: '400px', // Maksimalna širina za formu
-          width: '100%', // Širina forme
+          boxShadow: 3,
+          maxWidth: "400px",
+          width: "100%",
         }}
       >
         <AccountCircleIcon
-          sx={{ m: 1, width: 56, height: 56, color: "##1A1C20" }}
+          sx={{ m: 1, width: 56, height: 56, color: "#1A1C20" }}
         />
         <Typography
           component="h1"
           variant="h5"
-          sx={{ fontWeight: "bold", marginBottom: 2, color: "##1A1C20" }}
+          sx={{ fontWeight: "bold", marginBottom: 2, color: "#1A1C20" }}
         >
           Prijavi se
         </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          noValidate
+          sx={{ mt: 1 }}
+          onSubmit={submitHandler}
+        >
           <TextField
             margin="normal"
             required
             fullWidth
-            id="username"
+            id="email"
             label="Email"
-            name="username"
-            autoComplete="username"
+            name="email"
+            autoComplete="email"
             autoFocus
+            value={formData.email}
+            onChange={handleInputChange}
             sx={textFieldStyles}
           />
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
+            name="sifra"
             label="Lozinka"
             type="password"
-            id="password"
+            id="lozinka"
             autoComplete="current-password"
+            value={formData.sifra}
+            onChange={handleInputChange}
             sx={textFieldStyles}
           />
           <Button
@@ -103,13 +157,13 @@ const PrijaviSe = () => {
           >
             Prijavi se
           </Button>
-          <Grid2 container justifyContent="flex-end">
-            <Grid2 item>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
               <NavLink style={{ color: "#F0A500" }} to="/register">
                 {"Nemate nalog? Registrujte se"}
               </NavLink>
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </Box>

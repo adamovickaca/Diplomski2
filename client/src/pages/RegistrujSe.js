@@ -12,9 +12,15 @@ import {
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import Grid2 from "@mui/material/Grid2"; // Make sure to import Grid2 correctly
 import pozadina from "../assets/images/pozadina.jpeg"; // Import your background image
+import { useNavigate } from "react-router-dom";
+import uploadImageToCloudinary from "../utils/uploadCloudinary.js";
+import { BASE_URL } from "../config.js";
+import { toast } from "react-toastify";
 
 const RegistrujSe = () => {
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState("korisnik");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewURL, setPreviewURL] = useState("");
 
   const handleRoleChange = (event, newRole) => {
     if (newRole !== null) {
@@ -28,14 +34,59 @@ const RegistrujSe = () => {
     email: "",
     sifra: "",
     brTelefona: "",
-    slika: "",
+    slika: selectedFile,
     adresa: "",
     grad: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleInputFile = async (event) => {
+    const file = event.target.files[0];
+    const data = await uploadImageToCloudinary(file);
+    setPreviewURL(data.url);
+    setSelectedFile(data.url);
+    console.log(" DATA URL" + data.url);
+    setFormData({ ...formData, slika: data.url });
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    const dataToSend = { ...formData, role };
+    if (
+      !dataToSend.ime ||
+      !dataToSend.prezime ||
+      !dataToSend.email ||
+      !dataToSend.sifra ||
+      !dataToSend.brTelefona
+    ) {
+      alert("Morate popuniti sva obavezna polja.");
+      return; // Prekini funkciju ako nisu svi podaci uneti
+    }
+    try {
+      const res = await fetch(`${BASE_URL}/auth/register`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+      const { message } = await res.json();
+
+      if (!res.ok) {
+        throw new Error(message);
+      }
+
+      toast.success(message);
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const textFieldStyles = {
@@ -61,7 +112,7 @@ const RegistrujSe = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",      
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -70,7 +121,7 @@ const RegistrujSe = () => {
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            mt:12,
+            mt: 12,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -79,12 +130,10 @@ const RegistrujSe = () => {
             borderRadius: "1rem",
             padding: "1rem",
             boxShadow: 3,
-            width: '100%',
+            width: "100%",
           }}
         >
-          <HowToRegIcon
-            sx={{  width: 56, height: 56, color: "#1A1C20" }}
-          />
+          <HowToRegIcon sx={{ width: 56, height: 56, color: "#1A1C20" }} />
           <Typography component="h1" variant="h5">
             Registruj se
           </Typography>
@@ -96,21 +145,22 @@ const RegistrujSe = () => {
             aria-label="role toggler"
             sx={{ mt: 2 }}
           >
-            <ToggleButton value="user" aria-label="user role">
+            <ToggleButton value="korisnik" aria-label="user role">
               Korisnik
             </ToggleButton>
-            <ToggleButton value="master" aria-label="master role">
+            <ToggleButton value="majstor" aria-label="master role">
               Majstor
             </ToggleButton>
           </ToggleButtonGroup>
 
-          {role === "user" && (
+          {role === "korisnik" && (
             <Grid
               container
               component="form"
               noValidate
               sx={{ mt: 1 }}
               spacing={2}
+              onSubmit={submitHandler} // Dodaj ovu liniju
             >
               <Grid item xs={6}>
                 <TextField
@@ -141,12 +191,13 @@ const RegistrujSe = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="username"
+                  id="email"
                   label="Email"
-                  name="username"
-                  autoComplete="username"
+                  name="email"
+                  autoComplete="email"
                   autoFocus
                   value={formData.email}
+                  onChange={handleChange}
                   sx={textFieldStyles}
                 />
               </Grid>
@@ -155,10 +206,10 @@ const RegistrujSe = () => {
                   margin="normal"
                   required
                   fullWidth
-                  name="password"
+                  name="sifra"
                   label="Lozinka"
                   type="password"
-                  id="password"
+                  id="lozinka"
                   autoComplete="current-password"
                   value={formData.sifra}
                   onChange={handleChange}
@@ -178,16 +229,84 @@ const RegistrujSe = () => {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  name="slika"
-                  label="URL slike"
-                  value={formData.slika}
-                  onChange={handleChange}
-                  sx={textFieldStyles}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  {selectedFile && (
+                    <figure
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                        border: "2px solid",
+                        borderColor: "primary.main",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        src={previewURL}
+                        alt="Preview"
+                        style={{ width: "100%", borderRadius: "50%" }}
+                      />
+                    </figure>
+                  )}
+
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "130px",
+                      height: "50px",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      onChange={handleInputFile}
+                      name="slika"
+                      accept=".jpg, .png"
+                      id="customFile"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        opacity: 0,
+                        cursor: "pointer",
+                      }}
+                    />
+                    <label
+                      htmlFor="customFile"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        paddingLeft: "1rem",
+                        paddingRight: "1rem",
+                        fontSize: "15px",
+                        lineHeight: "1.5",
+                        overflow: "hidden",
+                        backgroundColor: "#0066ff46",
+                        color: "text.headingColor",
+                        fontWeight: "600",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Upload photo
+                    </label>
+                  </div>
+                </div>
               </Grid>
+
               <Grid item xs={6}>
                 <TextField
                   margin="normal"
@@ -212,7 +331,7 @@ const RegistrujSe = () => {
               </Grid>
               <Grid item xs={12}>
                 <Button
-                  type="submit"
+                  type="submit" // Postavi tip dugmeta na "submit"
                   fullWidth
                   variant="contained"
                   sx={{
@@ -231,7 +350,7 @@ const RegistrujSe = () => {
             </Grid>
           )}
 
-          {role === "master" && (
+          {role === "majstor" && (
             <Grid
               container
               component="form"
@@ -268,12 +387,13 @@ const RegistrujSe = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="username"
+                  id="email"
                   label="Email"
-                  name="username"
-                  autoComplete="username"
+                  name="email"
+                  autoComplete="email"
                   autoFocus
                   value={formData.email}
+                  onChange={handleChange}
                   sx={textFieldStyles}
                 />
               </Grid>
@@ -282,10 +402,10 @@ const RegistrujSe = () => {
                   margin="normal"
                   required
                   fullWidth
-                  name="password"
+                  name="sifra"
                   label="Lozinka"
                   type="password"
-                  id="password"
+                  id="lozinka"
                   autoComplete="current-password"
                   value={formData.sifra}
                   onChange={handleChange}

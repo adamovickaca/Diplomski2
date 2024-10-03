@@ -18,6 +18,7 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+          <Route path="/" element={<Pocetna />} />
           <Route path="/pocetna" element={<Pocetna />} />
           <Route path="/delatnosti" element={<Delatnosti />} />
           <Route path="/majstori" element={<Majstori />} />

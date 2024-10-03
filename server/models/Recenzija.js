@@ -29,7 +29,7 @@ const Recenzija = new mongoose.Schema(
 Recenzija.pre(/^find/, function(next){
   this.populate({
     path:'korisnik',
-    select: "name photo",
+    select: "ime slika",
   });
   next();
 })
@@ -43,8 +43,8 @@ Recenzija.statics.calcAverageRating = async function (majstorId) {
     {
       $group: {
         _id: "$majstor",
-        sveOcene: { $sum: 1 },
-        prosecnaOcena: { $avg: "$rating" },
+        brOcene: { $sum: 1 },
+        prosOcena: { $avg: "$ocena" },
       },
     },
   ]);
@@ -52,11 +52,11 @@ Recenzija.statics.calcAverageRating = async function (majstorId) {
   if (stats.length > 0) {
     // Ako postoje rezultati
     await Majstor.findByIdAndUpdate(majstorId, {
-      sveOcene: stats[0].numOfRating,  // Ovdje koristimo stats[0].numOfRating
-      prosecnaOcena: stats[0].avgRating, // Ovdje koristimo stats[0].avgRating
+      sveOcene: stats[0].brOcene,  // Ovdje koristimo stats[0].numOfRating
+      prosecnaOcena: stats[0].prosOcena, // Ovdje koristimo stats[0].avgRating
     });
   } else {
-    // Ako nema ocjena, postavimo nulte vrijednosti
+    // Ako nema ocena, postavimo nulte vrijednosti
     await Majstor.findByIdAndUpdate(majstorId, {
       sveOcene: 0,
       prosecnaOcena: 0,

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { authContext } from "../../context/authContext";
 import {
   AppBar,
+  Box,
   Button,
   Typography,
   useMediaQuery,
@@ -20,6 +22,8 @@ const Navbar = () => {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
+  const { user, role, token } = useContext(authContext);
+
   return (
     <React.Fragment>
       <AppBar
@@ -39,9 +43,10 @@ const Navbar = () => {
           ) : (
             <>
               <Tabs
-                sx={{ marginLeft: "auto",
-                  '& .MuiTabs-indicator': {
-                    backgroundColor: '#F0A500', // Postavlja indikator boju 
+                sx={{
+                  marginLeft: "auto",
+                  "& .MuiTabs-indicator": {
+                    backgroundColor: "#F0A500", // Postavlja indikator boju
                   },
                 }}
                 textColor="inherit"
@@ -58,13 +63,55 @@ const Navbar = () => {
                   />
                 ))}
               </Tabs>
-              <Tabs sx={{ marginLeft: "auto", alignItems:"center"}}>
-              <Button sx={{ marginLeft: "auto", color:"inherit" }}  variant="text" onClick={() => { navigate("/login") }}>
-                Prijavi se
-              </Button>
-              <Button sx={{ marginLeft: "auto", color:"inherit" }}  variant="text" onClick={() => { navigate("/signin") }}>
-                Registruj se
-              </Button>
+              <Tabs sx={{ marginLeft: "auto", alignItems: "center" }}>
+                {token && user ? (
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Link
+                      to={
+                        role === "majstor"
+                          ? "/majstor"
+                          : "/delatnosti"
+                      }
+                    >
+                      <figure
+                        style={{
+                          width: "35px",
+                          height: "35px",
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <img
+                          src={user?.slika}
+                          style={{ width: "100%", borderRadius: "50%" }}
+                          alt="User Profile"
+                        />
+                      </figure>
+                    </Link>
+                  </Box>
+                ) : (
+                  <>
+                    <Button
+                      sx={{ marginLeft: "auto", color: "inherit" }}
+                      variant="text"
+                      onClick={() => {
+                        navigate("/login");
+                      }}
+                    >
+                      Prijavi se
+                    </Button>
+                    <Button
+                      sx={{ marginLeft: "auto", color: "inherit" }}
+                      variant="text"
+                      onClick={() => {
+                        navigate("/signin");
+                      }}
+                    >
+                      Registruj se
+                    </Button>
+                  </>
+                )}
               </Tabs>
             </>
           )}

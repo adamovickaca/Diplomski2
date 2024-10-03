@@ -16,7 +16,7 @@ import nadjiMajstora from "../assets/images/nadjiMajstora.png";
 import recenzija from "../assets/images/recenzija2.jpg";
 import zakazi from "../assets/images/zakazi2.jpg";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // Dodaj ovu liniju
-import majstor from "../assets/images/majstor.png";
+import majstor from "../assets/images/univerzalno.jpeg";
 import {
   AccordionActions,
   Accordion,
@@ -94,7 +94,7 @@ const HomePage = () => {
               src={majstor} // Putanja do slike
               alt="Majstor"
               style={{
-                maxWidth: "65%", // Ograničava širinu slike
+                maxWidth: "100%", // Ograničava širinu slike
                 height: "auto", // Održava proporcije
               }}
             />
