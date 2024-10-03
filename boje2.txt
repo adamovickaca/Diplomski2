@@ -1,0 +1,4 @@
+BELA: #F4F4F4
+NARANDZASTA (svetla): #F0A500
+tamnija: #CF7500
+crna: #1A1C20

@@ -1,0 +1,11 @@
+colors:
+-> crna -> 
+-> narandzasta -> #ff9754
+
+
+Classy palette:
+ljubicasta : #c928bd
+braonkasta: #51424e
+siva: #b7a6b4
+tamna narandz.: #c45200
+svetla narandz: #ff8606

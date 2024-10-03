@@ -1,0 +1,64 @@
+dodavanje u bazu:
+
+delatnosti:
+[
+  {
+    "naziv": "građevinski radovi",
+    "opis": "Sve vrste građevinskih radova.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "elektrika",
+    "opis": "Instalacije i popravke električnih sistema.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "održavanje",
+    "opis": "Održavanje i popravka raznih uređaja.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "čevne instalacije",
+    "opis": "Instalacije i popravke vodovodnih sistema.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "obrada materijala",
+    "opis": "Obrada drva, metala i drugih materijala.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "garderoba i nakit",
+    "opis": "Kreiranje i prodaja garderobe i nakita.",
+    "slika": "link_do_slike"
+  },
+  {
+    "naziv": "održavanje vozila",
+    "opis": "Održavanje i popravka vozila.",
+    "slika": "link_do_slike"
+  }
+]
+------------------------------------------
+GRADJEVINA
+[
+  {
+    "naziv": "Moler",
+    "delatnostId": "ID_GRAĐEVINSKE_DELATNOSTI" // Zamenite sa stvarnim ID-em
+  },
+  {
+    "naziv": "Zidar",
+    "delatnostId": "ID_GRAĐEVINSKE_DELATNOSTI"
+  },
+  {
+    "naziv": "Parketar",
+    "delatnostId": "ID_GRAĐEVINSKE_DELATNOSTI"
+  },
+  {
+    "naziv": "Gipsar",
+    "delatnostId": "ID_GRAĐEVINSKE_DELATNOSTI"
+  },
+  {
+    "naziv": "Fasader",
+    "delatnostId": "ID_GRAĐEVINSKE_DELATNOSTI"
+  }
+]
