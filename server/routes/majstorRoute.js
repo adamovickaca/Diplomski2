@@ -6,7 +6,9 @@ import {
   filterMajstorGrad,
   filterMajstorIme,
   majstorProfil,
-  dodajTermin
+  dodajTermin,
+  filterMajstorPoddelatnost
+
 } from "../controllers/majstorController.js";
 
 const router = express.Router();
@@ -33,4 +35,5 @@ router.get('/majstor/profil', majstorProfil); // Ovde se očekuje da imate middl
 // Dodavanje termina
 router.post('/majstor/termin/:id', dodajTermin); // Ovde takođe postaviti middleware za autentifikaciju
 
+router.get("/majstor/filter/poddelatnost", filterMajstorPoddelatnost )
 export default router;

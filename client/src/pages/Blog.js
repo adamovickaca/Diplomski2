@@ -1,69 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { Box, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, ToggleButton, ToggleButtonGroup, Typography, CircularProgress } from "@mui/material";
 import BlogCard from "../components/Blog/BlogCard"; // Import the BlogCard component
-import slika from "../assets/images/cistacica.jpg"
+import { BASE_URL } from "../config"; // Uveri se da imaš BASE_URL definisan
+
 const Blog = () => {
   const [value, setValue] = useState("1");
   const [filteredBlog, setFilteredBlog] = useState([]);
+  const [allBlogs, setAllBlogs] = useState([]); // Drži sve blogove
+  const [loading, setLoading] = useState(true); // Za loading state
+  const [error, setError] = useState(null); // Za greške
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const mockBlog = [
-    {
-      _id: "1",
-      name: "Krečenje",
-      city: "Grad 1",
-      description: "Ovo je kratak opis teme krečenja.",
-      image: slika,
-      category: "Krečenje",
-    },
-    {
-      _id: "2",
-      name: "Zidarstvo",
-      city: "Grad 2",
-      description: "Ovo je kratak opis teme zidanja.",
-      image: "putanja/do/slike2.jpg",
-      category: "Zidarstvo",
-    },
-    {
-      _id: "3",
-      name: "Krovovi i njihovo održavanje",
-      city: "Kragujevac",
-      description: "Ovo je kratak opis teme krovova.",
-      image: "putanja/do/slike3.jpg",
-      category: "Krovopokrivač",
-    },
-    {
-      _id: "4",
-      name: "Još jedan blog o krovovima",
-      city: "Beograd",
-      description: "Ovo je još jedan kratak opis teme krovova.",
-      image: "putanja/do/slike4.jpg",
-      category: "Krovopokrivač",
-    },
-  ];
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/blogovi`);
+        if (!response.ok) {
+          throw new Error("Greška prilikom učitavanja blogova");
+        }
+        const blogs = await response.json();
+        setAllBlogs(blogs);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   useEffect(() => {
     const filterBlogs = () => {
       switch (value) {
         case "1":
-          setFilteredBlog(mockBlog.filter(blog => blog.category === "Krečenje"));
+          setFilteredBlog(allBlogs.filter((blog) => blog.tag === "Kuca"));
           break;
         case "2":
-          setFilteredBlog(mockBlog.filter(blog => blog.category === "Zidarstvo"));
+          setFilteredBlog(allBlogs.filter((blog) => blog.tag === "Dvoriste"));
           break;
         case "3":
-          setFilteredBlog(mockBlog.filter(blog => blog.category === "Krovopokrivač"));
-          break;
+          setFilteredBlog(allBlogs.filter((blog) => blog.tag === "Garderoba"));
+          break; // Dodaj break ovde
+        case "4":
+          setFilteredBlog(allBlogs.filter((blog) => blog.tag === "Vozila"));
+          break; // Dodaj break ovde
         default:
-          setFilteredBlog(mockBlog);
+          setFilteredBlog(allBlogs);
       }
     };
 
     filterBlogs();
-  }, [value]);
+  }, [value, allBlogs]); // Dodaj allBlogs kao zavisnost
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+        <CircularProgress /> {/* Prikazuje loading animaciju */}
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography variant="h6" color="error" sx={{ mt: 10 }}>
+        Error: {error} {/* Prikazuje grešku */}
+      </Typography>
+    );
+  }
 
   return (
     <Box
@@ -86,7 +93,7 @@ const Blog = () => {
           padding: "2rem",
         }}
       >
-         <ToggleButtonGroup
+        <ToggleButtonGroup
           value={value}
           exclusive
           onChange={handleChange}
@@ -100,7 +107,7 @@ const Blog = () => {
         >
           <ToggleButton
             value="1"
-            aria-label="Krečenje"
+            aria-label="Kuća"
             sx={{
               flex: 1,
               padding: "7px 15px",
@@ -108,11 +115,11 @@ const Blog = () => {
               "&.Mui-selected": { color: "#F4F4F4", background: "#1A1C20" },
             }}
           >
-            Krečenje
+            Kuća
           </ToggleButton>
           <ToggleButton
             value="2"
-            aria-label="Zidarstvo"
+            aria-label="Dvorište"
             sx={{
               flex: 1,
               padding: "7px 15px",
@@ -120,11 +127,11 @@ const Blog = () => {
               "&.Mui-selected": { color: "#F4F4F4", background: "#1A1C20" },
             }}
           >
-            Zidarstvo
+            Dvorište
           </ToggleButton>
           <ToggleButton
             value="3"
-            aria-label="Krovopokrivač"
+            aria-label="Garderoba"
             sx={{
               flex: 1,
               padding: "7px 15px",
@@ -132,7 +139,19 @@ const Blog = () => {
               "&.Mui-selected": { color: "#F4F4F4", background: "#1A1C20" },
             }}
           >
-            Krovopokrivač
+            Garderoba
+          </ToggleButton>
+          <ToggleButton
+            value="4"
+            aria-label="Vozila"
+            sx={{
+              flex: 1,
+              padding: "7px 15px",
+              borderColor: "#1A1C20",
+              "&.Mui-selected": { color: "#F4F4F4", background: "#1A1C20" },
+            }}
+          >
+            Vozila
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
@@ -154,7 +173,7 @@ const Blog = () => {
           }}
         >
           {filteredBlog.map((blog) => (
-            <BlogCard key={blog._id} majstor={blog} />
+            <BlogCard key={blog._id} blog={blog} />
           ))}
         </Box>
       </Box>

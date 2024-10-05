@@ -1,5 +1,6 @@
 import Poddelatnost from "../models/Poddelatnost.js";
 import Delatnost from "../models/Delatnost.js"; // Uverite se da je putanja ispravna
+import mongoose from 'mongoose';
 
 export const dodajPoddelatnost = async (req, res) => {
   const { naziv, delatnost, slika } = req.body;
@@ -66,3 +67,28 @@ export const vratiSvePoddelatnosti = async (req, res) => {
       });
     }
   };
+
+  export const poddelatnosti = async (req, res) => {
+    try {
+      const poddelatnosti = await Poddelatnost.find();
+      
+      if (!poddelatnosti.length) {
+        return res.status(404).json({
+          success: false,
+          message: "Nema poddelatnosti!",
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: poddelatnosti,
+      });
+    } catch (error) {
+      console.error("Error in vratiSvePoddelatnosti:", error);
+      res.status(500).json({
+        success: false,
+        message: "Greška, pokušajte ponovo.",
+      });
+    }
+  };
+  

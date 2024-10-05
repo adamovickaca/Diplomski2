@@ -1,4 +1,5 @@
 import Delatnost from "../models/Delatnost.js";
+import Poddelatnost from "../models/Poddelatnost.js";
 
 export const dodajDelatnost = async (req, res) => {
   const { naziv, opis, slika } = req.body;
@@ -76,6 +77,38 @@ export const vratiDelatnosti = async (req, res) => {
       success: false,
       message: "Greška prilikom vraćanja delatnosti",
       error: err.message,
+    });
+  }
+};
+
+export const vratiDelatnostiIPoddelatnosti = async (req, res) => {
+  try {
+    // Preuzmi sve delatnosti
+    const delatnosti = await Delatnost.find();
+
+    // Preuzmi sve poddelatnosti
+    const poddelatnosti = await Poddelatnost.find();
+
+    // Grupišemo poddelatnosti po delatnostima
+    const delatnostiSaPoddelatnostima = delatnosti.map(delatnost => {
+      // Filtriramo poddelatnosti koje pripadaju trenutnoj delatnosti
+      const relevantPoddelatnosti = poddelatnosti.filter(p => p.delatnost.equals(delatnost._id));
+
+      // Vraćamo delatnost sa svim relevantnim poddelatnostima
+      return {
+        ...delatnost._doc,
+        poddelatnosti: relevantPoddelatnosti, // Uključujemo sve informacije iz poddelatnosti
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: delatnostiSaPoddelatnostima,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

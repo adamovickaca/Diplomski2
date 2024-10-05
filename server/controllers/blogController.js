@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 export const vratiBlogove = async (req, res) => {
   try {
     const tag = req.query.tag; // Očekuje se da se kategorija šalje kao upit
-    const blogs = category ? await Blog.find({ tag }) : await Blog.find();
+    const blogs = tag ? await Blog.find({ tag }) : await Blog.find();
     res.json(blogs);
   } catch (error) {
     res.status(500).json({ message: error.message });

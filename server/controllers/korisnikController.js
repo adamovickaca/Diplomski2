@@ -8,6 +8,7 @@ import Majstor from "../models/Majstor.js";
 
 export const azurirajKorisnika = async (req, res) => {
   const id = req.params.id;
+  console.log(id);
   try {
     const azuriran = await Korisnik.findByIdAndUpdate(
       id,
@@ -19,6 +20,7 @@ export const azurirajKorisnika = async (req, res) => {
       message: "Uspesno azuriran!",
       data: azuriran,
     });
+    console.log(azuriran);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -81,8 +83,12 @@ export const vratiSveKorisnike = async (req, res) => {
 
 export const profilKorisnika = async (req, res) => {
   const korisnikId = req.korisnikId;
+  //console.log("Korisnik ID:", korisnikId);
+
   try {
     const korisnik = await Korisnik.findById(korisnikId);
+    //console.log("Pronađen korisnik:", korisnik); // Pronađeni korisnik
+
     if (!korisnik) {
       return res.status(404).json({
         success: false,
@@ -90,7 +96,7 @@ export const profilKorisnika = async (req, res) => {
       });
     }
 
-    const { sifra, ...rest } = user._doc;
+    const { sifra, ...rest } = korisnik._doc;
     res.status(200).json({
       success: true,
       message: "Profil",

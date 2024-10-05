@@ -4,7 +4,7 @@ import StarIcon from "@mui/icons-material/Star";
 import cistacica from "../../assets/images/cistacica.jpg";
 
 const MajstorCard = ({ majstor }) => {
-  const { name, city, averageRating, totalRating, delatnost } = majstor;
+  const { ime, prezime, email, brTelefona, slika, adresa, grad, prosecnaOcena, sveOcene, bio } = majstor;
 
   return (
     <Card
@@ -23,7 +23,7 @@ const MajstorCard = ({ majstor }) => {
         component="img"
         height="140"
         image={cistacica}
-        alt={name}
+        alt={ime}
       />
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -33,15 +33,15 @@ const MajstorCard = ({ majstor }) => {
             color="#1A1C20"
             fontWeight="bold"
           >
-            {name}
+            {ime} {prezime}
           </Typography>
           <Box display="flex" alignItems="center">
             <StarIcon sx={{ color: "#ff8606" }} />
             <Typography variant="body2" ml={0.5}>
-              {averageRating}
+              {prosecnaOcena}
             </Typography>
             <Typography variant="body2" ml={1} color="text.secondary">
-              ({totalRating})
+              ({sveOcene})
             </Typography>
           </Box>
         </Box>
@@ -57,14 +57,14 @@ const MajstorCard = ({ majstor }) => {
               fontWeight: "bold",
             }}
           >
-            {delatnost}
+            {"delatnost"}
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          {city}
+          {grad}
         </Typography>
         <Typography variant="body2" mt={1} color="text.secondary">
-          Kratak opis ili dodatne informacije o majstoru.
+          {bio}
         </Typography>
       </CardContent>
     </Card>

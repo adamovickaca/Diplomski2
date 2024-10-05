@@ -3,7 +3,8 @@ import {
     dodajDelatnost,
     vratiDelatnosti,
     obrisiDelatnost,
-    azurirajDelatnost
+    azurirajDelatnost,
+    vratiDelatnostiIPoddelatnosti
 
 } from "../controllers/delatnostController.js";
 
@@ -20,5 +21,6 @@ router.delete('/delatnost/:id', obrisiDelatnost);
 
 // Ruta za vraćanje svih delatnosti
 router.get('/delatnosti', vratiDelatnosti)
+router.get('/delatnost/podelatnost', vratiDelatnostiIPoddelatnosti )
 
 export default router;

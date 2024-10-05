@@ -68,9 +68,9 @@ const Navbar = () => {
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Link
                       to={
-                        role === "majstor"
-                          ? "/majstor"
-                          : "/delatnosti"
+                        role === "korisnik"
+                          ? "/delatnosti"
+                          : "/majstor"
                       }
                     >
                       <figure

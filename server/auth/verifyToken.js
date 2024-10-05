@@ -13,14 +13,13 @@ export const authentificate = async (req, res, next) => {
       message: "No token, authorization denied",
     });
   }
-
   try {
     const token = authToken.split(" ")[1];
 
     //verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    req.userId = decoded.id;
+    req.korisnikId = decoded.id;
     req.role = decoded.role;
     // Debugging line
 
@@ -38,10 +37,10 @@ export const authentificate = async (req, res, next) => {
 };
 
 export const restrict = (roles) => async (req, res, next) => {
-  const userId = req.userId;
+  const korisnikId = req.korisnikId;
   let user;
-  const korisnik = await Korisnik.findById(userId);
-  const majstor = await Majstor.findById(userId);
+  const korisnik = await Korisnik.findById(korisnikId);
+  const majstor = await Majstor.findById(korisnikId);
 
   if (korisnik) {
     user = korisnik;

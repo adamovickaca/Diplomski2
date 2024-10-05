@@ -135,6 +135,42 @@ export const filterMajstorGrad = async (req, res) => {
   }
 };
 
+export const filterMajstorPoddelatnost = async (req, res) => {
+  try {
+    const { poddelatnost } = req.query; // Preuzmite query parametar iz URL-a
+    console.log("Query Params:", { poddelatnost }); // Proverite šta se preuzima
+
+    let filter = { status: "prihvacen" };
+
+    if (poddelatnost) {
+      filter.poddelatnost = poddelatnost; // Pretražuje po poddelatnosti
+    }
+
+    const majstori = await Majstor.find(filter).populate("poddelatnost").select("-sifra");
+
+    if (majstori.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Nema pronađenih majstora sa tom poddelatnošću!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Pronađeni majstori",
+      data: majstori,
+    });
+  } catch (err) {
+    console.error("Error in filterMajstorPoddelatnost:", err);
+    res.status(500).json({
+      success: false,
+      message: "Greška, pokušajte ponovo",
+      error: err.message,
+    });
+  }
+};
+
+
 export const majstorProfil = async (req, res) => {
   const majstorId = req.params.id;
   try {

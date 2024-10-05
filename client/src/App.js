@@ -12,6 +12,10 @@ import AdminProfil from "./profili/adminProfil.js";
 import Majstor from "./components/Majstori/Majstor/MajstorPocetna.js"
 import MajstorTermini from "../src/components/Majstori/Majstor/MajstorTermini.js"
 import Footer from "../src/components/Footer.js"
+import KorisnikProfil from "../src/profili/korisnik/korisnikProfil.js"
+import ProtectedRoute from "./routes/ProtectedRoute.js";
+import BlogDetail from "./components/Blog/BlogDetail.js";
+import Poddelatnosti from "./pages/Poddelatnosti.js";
 function App() {
   return (
     <div className="App">
@@ -29,8 +33,10 @@ function App() {
           <Route path="/admin" element= {<AdminProfil/>} />
           <Route path = "/majstor" element ={<Majstor/>} />
           <Route path = "/termini" element ={<MajstorTermini/>} />
-
-        </Routes>
+          <Route path = "/korisnik/profil" element ={<ProtectedRoute allowedRoles={'korisnik'}><KorisnikProfil/></ProtectedRoute>} />
+          <Route path="/blog/:id" element={<BlogDetail />} /> {/* Define route for BlogDetail */}
+          <Route path="/poddelatnosti/:delatnostId" element={<Poddelatnosti />} />
+          </Routes>
         <Footer/>
       </Router>
     </div>

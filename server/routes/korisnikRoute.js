@@ -7,14 +7,14 @@ import {
   profilKorisnika,
   korisnikRezervacije,
 } from "../controllers/korisnikController.js";
-
+import {authentificate} from "../auth/verifyToken.js"
 const router = express.Router();
 
-router.put('/korisnik/:id', azurirajKorisnika);
+router.put('/korisnik/:id', authentificate, azurirajKorisnika);
 router.delete('/korisnik/:id', obrisiKorisnika);
 router.get('/korisnik/:id', vratiKorisnika);
 router.get('/korisnici', vratiSveKorisnike);
-router.get('/profil', profilKorisnika); // Koristi auth middleware za korisnika
+router.get('/profil', authentificate,  profilKorisnika); // Koristi auth middleware za korisnika
 router.get('/rezervacije', korisnikRezervacije); 
 
 export default router;

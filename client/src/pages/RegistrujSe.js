@@ -98,11 +98,11 @@ const RegistrujSe = () => {
         borderColor: "#999",
       },
       "&.Mui-focused fieldset": {
-        borderColor: "##1A1C20",
+        borderColor: "#1A1C20",
       },
     },
     "& .MuiInputLabel-root": {
-      color: "##1A1C20", // Postavlja boju labela
+      color: "#1A1C20", // Postavlja boju labela
     },
     "& .MuiInputLabel-root.Mui-focused": {
       color: "#3d353e", // Postavlja boju kada je polje fokusirano
