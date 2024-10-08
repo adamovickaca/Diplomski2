@@ -19,7 +19,7 @@ router.put('/majstori/odbij/:majstorId', odbijMajstora);
 router.get('/majstori', vratiSveMajstore);
 
 // Ruta za vraćanje majstora na čekanju
-router.get('/majstori/na-cekanju', vratiMajstoreNaCekanju);
+router.get('/majstori/nacekanju', vratiMajstoreNaCekanju);
 
 // Ruta za vraćanje prihvaćenih majstora
 router.get('/majstori/prihvaceni', vratiMajstorePrihvacene);

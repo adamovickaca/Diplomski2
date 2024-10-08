@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
   Button,
   Grid,
+  MenuItem,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -21,6 +22,43 @@ const RegistrujSe = () => {
   const [role, setRole] = useState("korisnik");
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewURL, setPreviewURL] = useState("");
+
+  const [delatnosti, setDelatnosti] = useState([]);
+  const [poddelatnosti, setPoddelatnosti] = useState([]);
+  const [selectedDelatnost, setSelectedDelatnost] = useState("");
+  const [selectedPoddelatnost, setSelectedPoddelatnost] = useState("");
+
+  useEffect(() => {
+    const fetchDelatnosti = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/delatnosti/delatnost/podelatnost`
+        ); // Proveri URL
+        const data = await response.json();
+        if (data.success) {
+          setDelatnosti(data.data);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error("Greška prilikom učitavanja delatnosti.");
+      }
+    };
+
+    fetchDelatnosti();
+  }, []);
+
+  const handleDelatnostChange = (e) => {
+    const delatnostId = e.target.value;
+    setSelectedDelatnost(delatnostId);
+
+    const selectedDelatnost = delatnosti.find((d) => d._id === delatnostId);
+    if (selectedDelatnost) {
+      setPoddelatnosti(selectedDelatnost.poddelatnosti);
+    } else {
+      setPoddelatnosti([]);
+    }
+  };
 
   const handleRoleChange = (event, newRole) => {
     if (newRole !== null) {
@@ -57,7 +95,15 @@ const RegistrujSe = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    const dataToSend = { ...formData, role };
+    const dataToSend = { ...formData, role, delatnost: selectedDelatnost };
+    if(role === "majstor")
+    {
+      dataToSend.poddelatnost = selectedPoddelatnost;
+      dataToSend.kvalifikacija = formData.kvalifikacija;
+      dataToSend.iskustvo = formData.iskustvo;
+      dataToSend.bio = formData.bio;
+      dataToSend.oMajstoru = formData.oMajstoru;
+    }
     if (
       !dataToSend.ime ||
       !dataToSend.prezime ||
@@ -243,7 +289,6 @@ const RegistrujSe = () => {
                         width: "60px",
                         height: "60px",
                         borderRadius: "50%",
-                        border: "2px solid",
                         borderColor: "primary.main",
                         display: "flex",
                         alignItems: "center",
@@ -306,7 +351,6 @@ const RegistrujSe = () => {
                   </div>
                 </div>
               </Grid>
-
               <Grid item xs={6}>
                 <TextField
                   margin="normal"
@@ -357,6 +401,7 @@ const RegistrujSe = () => {
               noValidate
               sx={{ mt: 1 }}
               spacing={2}
+              onSubmit={submitHandler} // Dodaj ovu liniju
             >
               <Grid item xs={6}>
                 <TextField
@@ -428,23 +473,28 @@ const RegistrujSe = () => {
                 <TextField
                   margin="normal"
                   fullWidth
-                  name="slika"
-                  label="URL slike"
-                  value={formData.slika}
-                  onChange={handleChange}
-                  sx={textFieldStyles}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="normal"
-                  fullWidth
                   name="adresa"
                   label="Adresa"
                   value={formData.adresa}
                   onChange={handleChange}
                   sx={textFieldStyles}
                 />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  select
+                  label="Delatnost"
+                  value={selectedDelatnost}
+                  onChange={handleDelatnostChange}
+                  fullWidth
+                  sx={textFieldStyles}
+                >
+                  {delatnosti.map((delatnost) => (
+                    <MenuItem key={delatnost._id} value={delatnost._id}>
+                      {delatnost.naziv}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -457,16 +507,22 @@ const RegistrujSe = () => {
                   sx={textFieldStyles}
                 />
               </Grid>
+
               <Grid item xs={6}>
                 <TextField
-                  margin="normal"
-                  fullWidth
-                  name="poddelatnost"
+                  select
                   label="Poddelatnost"
-                  value={formData.poddelatnost}
-                  onChange={handleChange}
+                  value={selectedPoddelatnost}
+                  onChange={(e) => setSelectedPoddelatnost(e.target.value)}
+                  fullWidth
                   sx={textFieldStyles}
-                />
+                >
+                  {poddelatnosti.map((poddelatnost) => (
+                    <MenuItem key={poddelatnost._id} value={poddelatnost._id}>
+                      {poddelatnost.naziv}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -512,6 +568,84 @@ const RegistrujSe = () => {
                   sx={textFieldStyles}
                 />
               </Grid>
+              <Grid item xs={6}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  {selectedFile && (
+                    <figure
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                        border: "2px solid",
+                        borderColor: "primary.main",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        src={previewURL}
+                        alt="Preview"
+                        style={{ width: "100%", borderRadius: "50%" }}
+                      />
+                    </figure>
+                  )}
+
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "130px",
+                      height: "50px",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      onChange={handleInputFile}
+                      name="slika"
+                      accept=".jpg, .png"
+                      id="customFile"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        opacity: 0,
+                        cursor: "pointer",
+                      }}
+                    />
+                    <label
+                      htmlFor="customFile"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        paddingLeft: "1rem",
+                        paddingRight: "1rem",
+                        fontSize: "15px",
+                        lineHeight: "1.5",
+                        overflow: "hidden",
+                        backgroundColor: "#0066ff46",
+                        color: "text.headingColor",
+                        fontWeight: "600",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Upload photo
+                    </label>
+                  </div>
+                </div>
+              </Grid>
               <Grid item xs={12}>
                 <Button
                   type="submit"
@@ -520,7 +654,7 @@ const RegistrujSe = () => {
                   sx={{
                     mt: 3,
                     mb: 2,
-                    backgroundColor: "##1A1C20",
+                    backgroundColor: "#1A1C20",
                     color: "white",
                     "&:hover": {
                       backgroundColor: "#3d353e",

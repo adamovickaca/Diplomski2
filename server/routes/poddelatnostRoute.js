@@ -2,7 +2,8 @@ import express, { Router } from "express";
 import {
     dodajPoddelatnost,
     vratiSvePoddelatnosti,
-    poddelatnosti
+    poddelatnosti,
+    azurirajPoddelatnost
     
 } from "../controllers/poddelatnostController.js";
 
@@ -15,4 +16,7 @@ router.post('/poddelatnost', dodajPoddelatnost);
 router.get('/poddelatnost/:delatnostId', vratiSvePoddelatnosti);
 
 router.get('/sve', poddelatnosti)
+
+
+router.put('/poddelatnost/:id', azurirajPoddelatnost);
 export default router;

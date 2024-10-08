@@ -2,7 +2,6 @@ import Majstor from "../models/Majstor.js";
 import Rezervacija from "../models/Rezervacija.js";
 import mongoose from "mongoose";
 
-
 export const azurirajMajstora = async (req, res) => {
   const id = req.params.id;
   try {
@@ -96,7 +95,6 @@ export const filterMajstorIme = async (req, res) => {
   }
 };
 
-
 export const filterMajstorGrad = async (req, res) => {
   try {
     const { grad } = req.query; // Preuzmite query parametre iz URL-a
@@ -108,16 +106,13 @@ export const filterMajstorGrad = async (req, res) => {
       filter.grad = { $regex: grad, $options: "i" }; // Pretražuje po gradu
     }
 
-    const majstori = await Majstor.find(filter).select(
-      "-sifra"
-    );
+    const majstori = await Majstor.find(filter).select("-sifra");
 
     if (majstori.length === 0) {
       // Ako nema rezultata, vratite sve servisne pružatelje kao alternativu
       return res.status(200).json({
         success: true,
-        message:
-          "Nema pronadjenih rezultata!",
+        message: "Nema pronadjenih rezultata!",
       });
     }
 
@@ -146,7 +141,9 @@ export const filterMajstorPoddelatnost = async (req, res) => {
       filter.poddelatnost = poddelatnost; // Pretražuje po poddelatnosti
     }
 
-    const majstori = await Majstor.find(filter).populate("poddelatnost").select("-sifra");
+    const majstori = await Majstor.find(filter)
+      .populate("poddelatnost")
+      .select("-sifra");
 
     if (majstori.length === 0) {
       return res.status(404).json({
@@ -170,11 +167,12 @@ export const filterMajstorPoddelatnost = async (req, res) => {
   }
 };
 
-
 export const majstorProfil = async (req, res) => {
   const majstorId = req.params.id;
   try {
-    const majstor = await Majstor.findById(majstorId);
+    const majstor = await Majstor.findById(majstorId)
+      .populate("recenzije") // Popunite recenzije
+      .exec();
     if (!majstor) {
       return res.status(404).json({
         success: false,
@@ -199,36 +197,161 @@ export const majstorProfil = async (req, res) => {
 };
 
 export const dodajTermin = async (req, res) => {
-  const majstorId = req.params.id; // Uzimamo ID majstora iz URL-a
-  const { noviTermin } = req.body; // Pretpostavljamo da noviTermin dolazi u telu zahteva
+  const majstorId = req.params.id; 
+  const { noviTermin } = req.body; 
 
-  // Proverava da li je ID majstora validan
   if (!mongoose.Types.ObjectId.isValid(majstorId)) {
-      return res.status(400).json({ message: 'Nevažeći ID majstora' });
+    return res.status(400).json({ message: "Nevažeći ID majstora" });
   }
 
   try {
-      // Pronalazi majstora po ID-u
-      const majstor = await Majstor.findById(majstorId);
-      if (!majstor) {
-          return res.status(404).json({ message: 'Majstor nije pronađen' });
-      }
+    const majstor = await Majstor.findById(majstorId);
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
 
-      // Proverava da li je noviTermin validan
-      const datum = new Date(noviTermin);
-      if (isNaN(datum)) {
-          return res.status(400).json({ message: 'Nevažeći datum' });
-      }
+    const datum = new Date(noviTermin);
+    if (isNaN(datum)) {
+      return res.status(400).json({ message: "Nevažeći datum" });
+    }
 
-      // Dodaje novi termin u niz termina
-      majstor.termini.push(datum); // Dodaje datum u niz termina
+    // Proveri da li termin već postoji
+    const terminExists = majstor.termini.some(existingTermin => {
+      const existingDate = new Date(existingTermin);
+      return existingDate.getTime() === datum.getTime(); // Proverava da li postoji termin sa istim vremenom
+    });
 
-      // Čuva izmene u bazi
-      await majstor.save();
+    if (terminExists) {
+      return res.status(400).json({ message: "Termin sa istim vremenom već postoji." });
+    }
 
-      return res.status(200).json({ message: 'Termin uspešno dodat', majstor });
+    majstor.termini.push(datum);
+    await majstor.save();
+
+    return res.status(200).json({ message: "Termin uspešno dodat", majstor });
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Greška prilikom dodavanja termina', error });
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom dodavanja termina", error });
   }
 };
+
+export const getTermini = async (req, res) => {
+  const majstorId = req.params.id; // Uzimamo ID majstora iz URL-a
+  try {
+    // Pronalazi majstora po ID-u
+    const majstor = await Majstor.findById(majstorId).select("termini");
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
+
+    // Vraća termine
+    res.status(200).json({
+      success: true,
+      message: "Uspesno dobijeni termini",
+      data: majstor.termini,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom dobijanja termina" });
+  }
+};
+
+export const getTerminiZaDatum = async (req, res) => {
+  const majstorId = req.params.id; // ID majstora iz URL-a
+  const { datum } = req.query; // Datum iz query parametara
+
+  try {
+    // Proveri da li je datum validan
+    const parsedDate = new Date(datum);
+    if (isNaN(parsedDate)) {
+      return res.status(400).json({ message: "Nevažeći datum" });
+    }
+
+    // Pronađi majstora po ID-u
+    const majstor = await Majstor.findById(majstorId).select("termini");
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
+
+    // Filtriraj termine koji odgovaraju datumu
+    const terminiZaDatum = majstor.termini.filter((termin) => {
+      const terminDate = new Date(termin);
+      return terminDate.toDateString() === parsedDate.toDateString();
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Uspesno dobijeni termini",
+      data: terminiZaDatum,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom dobijanja termina" });
+  }
+};
+
+// Izmeni termin
+export const izmeniTermin = async (req, res) => {
+  const majstorId = req.params.id; 
+  const { stariTermin, noviTermin } = req.body; // Primamo stari i novi termin
+
+  if (!mongoose.Types.ObjectId.isValid(majstorId)) {
+    return res.status(400).json({ message: "Nevažeći ID majstora" });
+  }
+
+  try {
+    const majstor = await Majstor.findById(majstorId);
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
+
+    // Proveri da li stari termin postoji
+    const index = majstor.termini.findIndex(termin => new Date(termin).toISOString() === new Date(stariTermin).toISOString());
+    if (index !== -1) {
+      // Ako postoji, izmeni ga
+      majstor.termini[index] = new Date(noviTermin).toISOString();
+      await majstor.save();
+      return res.status(200).json({ message: "Termin uspešno izmenjen", majstor });
+    } else {
+      return res.status(404).json({ message: "Termin nije pronađen" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom izmena termina", error });
+  }
+};
+
+
+
+
+// Izbriši termin
+export const obrisiTermin = async (req, res) => {
+  const majstorId = req.params.id; // ID majstora iz URL-a
+  const { termin } = req.body; // Datum termina koji treba obrisati
+
+  if (!mongoose.Types.ObjectId.isValid(majstorId)) {
+    return res.status(400).json({ message: "Nevažeći ID majstora" });
+  }
+
+  try {
+    const majstor = await Majstor.findById(majstorId);
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
+
+    // Pronađi i izbriši termin
+    const index = majstor.termini.findIndex(t => new Date(t).toISOString() === new Date(termin).toISOString());
+    if (index === -1) {
+      return res.status(404).json({ message: "Termin nije pronađen" });
+    }
+
+    majstor.termini.splice(index, 1);
+    await majstor.save();
+    return res.status(200).json({ message: "Termin uspešno obrisan", majstor });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom brisanja termina", error });
+  }
+};
+
+

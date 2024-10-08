@@ -1,21 +1,59 @@
 import { Box, Typography, Tabs, Tab, Button, Modal } from "@mui/material";
-import React, { useState } from "react";
-import Image from "../../../assets/images/bastovan.jpg";
+import React, { useContext, useEffect, useState } from "react";
+import Image from "../../../assets/images/bastovan.jpg"; // Default image
 import StarIcon from "@mui/icons-material/Star";
 import MajstorPodaci from "./MajstorPodaci.js";
 import MajstorRecenzije from "./MajstorRecenzije.js";
 import SidePanel from "./SidePanel.js";
 import ZakaziTermin from "../../Forma/ZakaziTermin.js";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { BASE_URL } from "../../../config.js";
+import { authContext } from "../../../context/authContext.js";
 
 const MajstorPocetna = () => {
+  const { majstorId } = useParams();
   const [value, setValue] = useState("podaci");
   const [zakaziTermin, setZakaziTermin] = useState(false);
+  const [majstor, setMajstor] = useState(null);
+  const [error, setError] = useState(null); // Dodavanje stanja za greške
   const navigate = useNavigate();
+
+  const { user, role } = useContext(authContext); // Dodaj role ovde
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    const fetchMajstori = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/majstori/majstor/profil/${majstorId}`
+        );
+        const data = await response.json();
+        if (data.success) {
+          setMajstor(data.data); // Postavljanje podataka o majstoru
+        } else {
+          setError("Nema pronađenih majstora.");
+        }
+      } catch (error) {
+        console.error("Greška prilikom učitavanja majstora:", error);
+        setError("Greška prilikom učitavanja majstora.");
+      }
+    };
+
+    fetchMajstori();
+  }, [majstorId]);
+
+  // Prikazivanje greške ili učitanih podataka
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  if (!majstor) {
+    return <Typography>Učitavanje...</Typography>; // Loading state
+  }
 
   return (
     <Box
@@ -32,7 +70,7 @@ const MajstorPocetna = () => {
         <Box sx={{ display: "flex" }}>
           <Box sx={{ flex: "0 0 auto", mr: 2 }}>
             <img
-              src={`${Image}?w=248&fit=crop&auto=format`}
+              src={majstor.slika || Image} // Koristi sliku iz objekta ili default sliku
               alt="Preview"
               loading="lazy"
               style={{ width: "100%", maxWidth: "240px" }}
@@ -63,22 +101,22 @@ const MajstorPocetna = () => {
                   mr: 1,
                 }}
               >
-                {"delatnost"}
+                {"delatnost"} {/* Zamenite sa stvarnom delatnošću */}
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Ime i prezime
+                {majstor.ime} {majstor.prezime}
               </Typography>
-              <Typography variant="body2">email@gmail.com</Typography>
-              <Typography variant="body2">0662333666</Typography>
-              <Typography variant="body2">1.maj 13, Babusnica</Typography>
+              <Typography variant="body2">{majstor.email}</Typography>
+              <Typography variant="body2">{majstor.brTelefona}</Typography>
+              <Typography variant="body2">{majstor.adresa}</Typography>
             </Box>
             <Box display="flex" alignItems="center" mb={1}>
               <StarIcon style={{ color: "#ff8606" }} />
               <Typography variant="body2" ml={0.5}>
-                {"4.6"}
+                {majstor.prosecnaOcena}
               </Typography>
               <Typography variant="body2" ml={1} color="text.secondary">
-                ({"10"})
+                ({majstor.sveOcene})
               </Typography>
             </Box>
           </Box>
@@ -99,14 +137,14 @@ const MajstorPocetna = () => {
             onChange={handleChange}
             sx={{
               "& .MuiTab-root": {
-                color: "text.secondary", // Boja neizabranih tabova
+                color: "text.secondary",
               },
               "& .Mui-selected": {
                 borderBottom: "2px solid #F0A500",
-                color: "#F0A500", // Boja teksta izabranog taba
+                color: "#F0A500",
               },
               "& .MuiTabs-indicator": {
-                backgroundColor: "transparent", // Uklanjanje ili promena boje indikatora
+                backgroundColor: "transparent",
               },
             }}
           >
@@ -114,73 +152,56 @@ const MajstorPocetna = () => {
             <Tab label="Recenzije" value="recenzije" />
           </Tabs>
           <Box sx={{ p: 2 }}>
-            {value === "podaci" && <MajstorPodaci />}
-            {value === "recenzije" && <MajstorRecenzije />}
+            {value === "podaci" && (
+              <MajstorPodaci majstor={majstor} user={user} />
+            )}
+            {value === "recenzije" && (
+              <MajstorRecenzije
+                majstorId={majstorId}
+                recenzije={majstor.recenzije}
+              />
+            )}
           </Box>
         </Box>
       </Box>
 
       {/* Right panel with side options */}
       <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column" }}>
-        <SidePanel sx={{ flexGrow: 1 }} />
-        <Box sx={{Width:"30%", alignContent:"center"}}>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#F0A500",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#CF7500",
-            },
-            mt: 2,
-            mr:2
-    
-          }}
-          onClick={() => setZakaziTermin(true)}
-        >
-          Zakazi termin
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#F0A500",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#CF7500",
-            },
-            mt: 2,
-            
-          }}
-          onClick={() => navigate("/termini")}
-        >
-          Prikazi termine
-        </Button>
+        <SidePanel majstorId={majstorId} role={role} sx={{ flexGrow: 1 }} />
+        <Box sx={{ width: "30%", alignContent: "center" }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#F0A500",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#CF7500",
+              },
+              mt: 2,
+              mr: 2,
+            }}
+            onClick={() => setZakaziTermin(true)}
+          >
+            Zakazi termin
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#F0A500",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#CF7500",
+              },
+              mt: 2,
+            }}
+            onClick={() => navigate(`/termini/${majstorId}`)} // Promena rute
+          >
+            Prikazi termine
+          </Button>
         </Box>
-
       </Box>
 
-      {/* Modal for scheduling an appointment */}
-      <Modal
-        open={zakaziTermin}
-        onClose={() => setZakaziTermin(false)}
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} // Center modal
-      >
-        <Box
-          sx={{
-            backgroundColor: "white",
-            padding: 2,
-            borderRadius: 1,
-            width: "400px",
-          }}
-        >
-          <ZakaziTermin
-            onClose={() => setZakaziTermin(false)}
-            onAdd={() => {
-              // Function for refreshing data
-            }}
-          />
-        </Box>
-      </Modal>
+      
     </Box>
   );
 };

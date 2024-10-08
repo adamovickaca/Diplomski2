@@ -92,3 +92,34 @@ export const vratiSvePoddelatnosti = async (req, res) => {
     }
   };
   
+
+export const azurirajPoddelatnost = async (req, res) => {
+  const id = req.params.id; // Preuzmite ID iz parametara
+  try {
+    const azuriranaPoddelatnost = await Poddelatnost.findByIdAndUpdate(
+      id,
+      { $set: req.body }, // Koristite $set za ažuriranje polja
+      { new: true, runValidators: true } // new: true vraća ažurirani dokument, runValidators: true pokreće validaciju
+    );
+
+    if (!azuriranaPoddelatnost) {
+      return res.status(404).json({
+        success: false,
+        message: "Poddelatnost nije pronađena!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Uspesno azurirana poddelatnost!",
+      data: azuriranaPoddelatnost,
+    });
+  } catch (err) {
+    console.error("Error updating poddelatnost:", err);
+    res.status(500).json({
+      success: false,
+      message: "Neuspesno ažuriranje poddelatnosti!",
+      error: err.message,
+    });
+  }
+};

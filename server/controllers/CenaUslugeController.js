@@ -110,3 +110,28 @@ export const vratiCeneUslugaZaMajstora = async (req, res) => {
       });
     }
   };
+
+  export const obrisiCenuUsluge = async (req, res) => {
+    const { cenaUslugeId } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(cenaUslugeId)) {
+      return res.status(400).json({ success: false, message: "Nevažeći ID cene usluge" });
+    }
+  
+    try {
+      const deletedCenaUsluge = await CenaUsluge.findByIdAndDelete(cenaUslugeId);
+      if (!deletedCenaUsluge) {
+        return res.status(404).json({ success: false, message: "Cena usluge nije pronađena" });
+      }
+  
+      return res.status(200).json({ success: true, message: "Cena usluge uspešno obrisana" });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        success: false,
+        message: "Greška prilikom brisanja cene usluge",
+        error: err.message,
+      });
+    }
+  };
+  

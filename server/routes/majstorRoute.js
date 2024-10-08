@@ -7,8 +7,10 @@ import {
   filterMajstorIme,
   majstorProfil,
   dodajTermin,
-  filterMajstorPoddelatnost
-
+  filterMajstorPoddelatnost,
+  getTermini,
+  getTerminiZaDatum, 
+  izmeniTermin, obrisiTermin
 } from "../controllers/majstorController.js";
 
 const router = express.Router();
@@ -30,10 +32,18 @@ router.get('/majstor/filter/ime', filterMajstorIme);
 router.get('/majstor/filter/grad', filterMajstorGrad);
 
 // Prikaz profila majstora
-router.get('/majstor/profil', majstorProfil); // Ovde se očekuje da imate middleware koji postavlja req.userId
+router.get('/majstor/profil/:id', majstorProfil); // Ovde se očekuje da imate middleware koji postavlja req.userId
 
 // Dodavanje termina
 router.post('/majstor/termin/:id', dodajTermin); // Ovde takođe postaviti middleware za autentifikaciju
 
-router.get("/majstor/filter/poddelatnost", filterMajstorPoddelatnost )
+router.get("/majstor/filter/poddelatnost", filterMajstorPoddelatnost );
+
+router.get('/majstori/:id/termini', getTermini);
+
+router.get('/majstori/:id/termini/datum', getTerminiZaDatum);
+
+router.put('/majstor/:id/termin', izmeniTermin);
+router.delete('/majstor/:id/termin', obrisiTermin);
+
 export default router;

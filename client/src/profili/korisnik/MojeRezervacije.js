@@ -1,7 +1,6 @@
 import React from 'react';
 import useFetchData from '../../hooks/useFetchData.js';
 import { BASE_URL } from '../../config';
-import MajstorCard from '../../../src/components/Majstori/MajstorCard.js';
 import { Box, Typography } from '@mui/material';
 import Loading from '../../components/LoadError/Loading.js';
 import ErrorMessage from '../../components/LoadError/Error.js';
@@ -21,9 +20,18 @@ const MojeRezervacije = () => {
             {!loading && !error && (
                 <>
                     {Array.isArray(rezervacije) && rezervacije.length > 0 ? (
-                        rezervacije.map(majstor => (
-                            <MajstorCard majstor={majstor} key={majstor._id} />
-                        ))
+                        rezervacije.map(rezervacija => {
+                            const { status, datumRezervacije, cena, majstor } = rezervacija;
+                            return (
+                                <Box key={rezervacija._id} sx={{ border: '1px solid #ccc', padding: 2, marginBottom: 2 }}>
+                                    <Typography variant="h6">{`${cena.majstor.ime} ${cena.majstor.prezime}`}</Typography>
+                                    <Typography variant="body1">{`Usluga: ${cena.usluga}`}</Typography>
+                                    <Typography variant="body1">{`Datum: ${new Date(datumRezervacije).toLocaleString()}`}</Typography>
+                                    <Typography variant="body1">{`Cena: ${cena.cena} RSD`}</Typography>
+                                    <Typography variant="body1">{`Status: ${status}`}</Typography>
+                                </Box>
+                            );
+                        })
                     ) : (
                         <Typography>Nemate zakazanih termina!</Typography>
                     )}

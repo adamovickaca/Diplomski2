@@ -16,6 +16,7 @@ import KorisnikProfil from "../src/profili/korisnik/korisnikProfil.js"
 import ProtectedRoute from "./routes/ProtectedRoute.js";
 import BlogDetail from "./components/Blog/BlogDetail.js";
 import Poddelatnosti from "./pages/Poddelatnosti.js";
+import MajstoriList from "./pages/MajstoriList.js";
 function App() {
   return (
     <div className="App">
@@ -30,12 +31,14 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/login" element={<PrijaviSe/>} />
           <Route path="/signin" element={<RegistrujSe/>} />
-          <Route path="/admin" element= {<AdminProfil/>} />
-          <Route path = "/majstor" element ={<Majstor/>} />
-          <Route path = "/termini" element ={<MajstorTermini/>} />
+          <Route path="/admin" element= {<ProtectedRoute allowedRoles={'admin'}><AdminProfil/></ProtectedRoute>} />
+          <Route path="/majstor/:majstorId" element={<Majstor />} /> {/* Dodajte ovu liniju */}
+          <Route path = "/termini/:majstorId" element ={<MajstorTermini/>} />
           <Route path = "/korisnik/profil" element ={<ProtectedRoute allowedRoles={'korisnik'}><KorisnikProfil/></ProtectedRoute>} />
           <Route path="/blog/:id" element={<BlogDetail />} /> {/* Define route for BlogDetail */}
           <Route path="/poddelatnosti/:delatnostId" element={<Poddelatnosti />} />
+          <Route path="/majstori/:poddelatnostId" element={<MajstoriList />} /> {/* Dodajte ovu liniju */}
+
           </Routes>
         <Footer/>
       </Router>

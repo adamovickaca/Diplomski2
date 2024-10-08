@@ -4,7 +4,8 @@ import {
     dodajBlog,
     azurirajBlog,
     obrisiBlog,
-    getTags
+    getTags,
+    vratiSveBlogove
 
 } from "../controllers/blogController.js";
 
@@ -19,5 +20,8 @@ router.put('/:id', azurirajBlog);
 router.delete('/:id', obrisiBlog);
 
 router.get("/tags", getTags);
+
+router.get('/blogovi', vratiSveBlogove);
+
 
 export default router;

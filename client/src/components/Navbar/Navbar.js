@@ -69,25 +69,13 @@ const Navbar = () => {
                     <Link
                       to={
                         role === "korisnik"
-                          ? "/delatnosti"
-                          : "/majstor"
+                        ? "korisnik/profil"
+                          : role === "admin"
+                          ? "/admin"
+                          : `/majstor/${user._id}` // podrazumevana opcija za majstora
                       }
                     >
-                      <figure
-                        style={{
-                          width: "35px",
-                          height: "35px",
-                          borderRadius: "50%",
-                          cursor: "pointer",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <img
-                          src={user?.slika}
-                          style={{ width: "100%", borderRadius: "50%" }}
-                          alt="User Profile"
-                        />
-                      </figure>
+                      <Button>Profil</Button>
                     </Link>
                   </Box>
                 ) : (

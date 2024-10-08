@@ -6,113 +6,135 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, TextField, Button, Typography, styled } from "@mui/material";
-import { useState } from "react";
-import { FormControl, Select } from "@mui/material";
-import { MenuItem } from "@mui/material";
+import { Box, Button, styled, Modal, FormControl, Select, MenuItem } from "@mui/material";
+import { useState, useEffect } from "react";
 import DodajBlog from "../../components/Forma/DodajBlog.js";
-import Modal from "@mui/material/Modal"; // Uvezi Modal iz MUI
+import { BASE_URL } from "../../config.js";
+import IzmeniBlog from "../../components/Forma/IzmeniBlog.js"; // Importuj novu komponentu
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
+const StyledTableCell = styled(TableCell)(() => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#1A1C20",
+    color: "white",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
 export default function Blogovi() {
-  const [username, setUsername] = React.useState("");
-  const [currentName, setCurrentName] = React.useState("");
-  const [userId, setUserId] = React.useState("");
+  const [blogs, setBlogs] = useState([]);
   const [dodajBlog, setDodajBlog] = useState(false);
-
-  const textFieldStyles = {
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "#ccc",
-      },
-      "&:hover fieldset": {
-        borderColor: "#999",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "#1A1C20",
-      },
-    },
-    "& .MuiInputLabel-root": {
-      color: "#1A1C20", // Postavlja boju labela
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "#3d353e", // Postavlja boju kada je polje fokusirano
-    },
+  const [tags, setTags] = useState([]);
+  const [selectedTag, setSelectedTag] = useState("");
+  const [izmeniBlog, setIzmeniBlog] = useState(false); // Dodaj stanje za izmenu
+  const [currentBlog, setCurrentBlog] = useState(null); 
+  
+  const fetchBlogs = async (tag = "") => {
+    try {
+      const response = await fetch(`${BASE_URL}/blogovi/?tag=${tag}`);
+      const data = await response.json();
+      setBlogs(data);
+    } catch (error) {
+      console.error("Greška prilikom učitavanja blogova:", error);
+    }
   };
-  const StyledTableCell = styled(TableCell)(() => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#1A1C20",
-      color: "white",
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    "&:last-child td, &:last-child th": {
-      border: 0,
-    },
-  }));
+
+  const fetchTags = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/blogovi/tags`);
+      const data = await response.json();
+      setTags(data);
+    } catch (error) {
+      console.error("Greška prilikom učitavanja tagova:", error);
+    }
+  };
+
+  const handleAddBlog = async (newBlog) => {
+    console.log("Blog koji se dodaje:", newBlog); // Dodaj ovo
+    try {
+      const response = await fetch(`${BASE_URL}/blogovi`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBlog),
+      });
+      const addedBlog = await response.json();
+      setBlogs((prevBlogs) => [...prevBlogs, addedBlog]);
+      setDodajBlog(false);
+    } catch (error) {
+      console.error("Greška prilikom dodavanja bloga:", error);
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    try {
+      await fetch(`${BASE_URL}/blogovi/${id}`, {
+        method: "DELETE",
+      });
+      setBlogs((prevBlogs) => prevBlogs.filter(blog => blog._id !== id));
+    } catch (error) {
+      console.error("Greška prilikom brisanja bloga:", error);
+    }
+  };
+  const handleOpenEdit = (blog) => {
+    setCurrentBlog(blog); // Postavi trenutni blog koji se menja
+    setIzmeniBlog(true); // Otvori modal za izmenu
+  };
+  const handleUpdateBlog = async (id, updatedBlog) => {
+    try {
+      const response = await fetch(`${BASE_URL}/blogovi/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedBlog),
+      });
+      const updatedData = await response.json();
+      setBlogs((prevBlogs) => prevBlogs.map(blog => (blog._id === id ? updatedData : blog)));
+    } catch (error) {
+      console.error("Greška prilikom ažuriranja bloga:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+    fetchTags(); // Učitaj tagove prilikom mount-a
+  }, []);
+
+  const handleSearchByTag = () => {
+    fetchBlogs(selectedTag); // Kada se klikne na dugme, pretražuje po odabranom tagu
+  };
+
   return (
     <>
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between", // Razdvaja elemente na krajeve
+          justifyContent: "space-between",
           alignItems: "baseline",
           mr: 7,
-          mb: 2, // Dodaj malo razmaka ispod
-          
+          mb: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "baseline", gap: 2 }}>
-          <TextField
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            sx={textFieldStyles}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              backgroundColor: "#1A1C20",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#3d353e",
-              },
-            }}
+        <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+          <Select
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
+            displayEmpty
           >
-            Search
-          </Button>
-        </Box>
-
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#1A1C20",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#3d353e",
-            },
-          }}
-          onClick={() => setDodajBlog(true)}
-        >
+            <MenuItem value="">
+              <em>Odaberi tag</em>
+            </MenuItem>
+            {tags.map((tag) => (
+              <MenuItem key={tag} value={tag}>
+                {tag}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button variant="contained" onClick={handleSearchByTag}>
+          Pretraži
+        </Button>
+        <Button variant="contained" onClick={() => setDodajBlog(true)}>
           Dodaj Blog
         </Button>
       </Box>
@@ -120,74 +142,57 @@ export default function Blogovi() {
         <Box sx={{ backgroundColor: "white", padding: 2, borderRadius: 1 }}>
           <DodajBlog
             onClose={() => setDodajBlog(false)}
-            onAdd={() => {
-              /* funkcija za osvežavanje podataka */
-            }}
+            onAdd={handleAddBlog}
+            tags={tags}
           />
         </Box>
       </Modal>
 
-      <Box sx={{ overflowX: "scroll", maxWidth: "95vw", minHeight:"80vh",p: 2, mr: 2 }}>
+      <Box sx={{ overflowX: "scroll", maxWidth: "95vw", minHeight: "80vh", p: 2, mr: 2 }}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>Naslov</StyledTableCell>
-                <StyledTableCell>Datum</StyledTableCell>
                 <StyledTableCell>Tagovi</StyledTableCell>
                 <StyledTableCell></StyledTableCell>
                 <StyledTableCell></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.id}>
+              {blogs.map((row) => (
+                <TableRow key={row._id}>
                   <StyledTableCell component="th" scope="row">
-                    {row.title}
+                    {row.naslov}
                   </StyledTableCell>
-                  <StyledTableCell>{row.companyName}</StyledTableCell>
+                  <StyledTableCell>{row.tag}</StyledTableCell>
                   <StyledTableCell>
-                    <FormControl
-                      variant="standard"
-                      sx={{ p: 0, m: 0, minWidth: 120 }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
-                        //value={age}
-                        // onChange={(e) => { handleChange(row.id, e.target.value) }}
-                        sx={{ p: 0, m: 0 }}
-                        value={row.status}
-                      >
-                        <MenuItem value={"Applied"}>Applied</MenuItem>
-                        <MenuItem value={"Finished"}>Finished</MenuItem>
-                        <MenuItem value={"Denied"}>Denied</MenuItem>
-                        <MenuItem value={"Accepted"}>Accepted</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Button
-                      sx={{
-                        color: "#c928bd",
-                        border: "1px",
-                        borderColor: "#ff8606",
-                      }}
-                    >
-                      {" "}
+                    <Button onClick={() => handleOpenEdit(row)}>
                       Izmeni
                     </Button>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Button sx={{ color: "#ff8606" }}> Obrisi</Button>
+                    <Button onClick={() => handleDeleteBlog(row._id)}>Obriši</Button>
                   </StyledTableCell>
-                </StyledTableRow>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
+
+       {/* Modal za izmenu */}
+       <Modal open={izmeniBlog} onClose={() => setIzmeniBlog(false)}>
+        <Box sx={{ backgroundColor: "white", padding: 2, borderRadius: 1 }}>
+          {currentBlog && (
+            <IzmeniBlog
+              blog={currentBlog}
+              onClose={() => setIzmeniBlog(false)}
+              onUpdate={handleUpdateBlog}
+            />
+          )}
+        </Box>
+      </Modal>
     </>
   );
 }

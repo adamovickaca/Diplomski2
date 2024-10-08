@@ -1,19 +1,51 @@
-import React, { useState } from "react";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Rating from "@mui/material/Rating";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
+import { useContext, useState } from "react";
+import { authContext } from "../../../context/authContext.js"; // Prilagodite putanju
+import { BASE_URL } from "../../../config.js";
+import { Box, Button, Rating, TextField, Typography } from "@mui/material";
 
-const RecenzijaForm = () => {
+const RecenzijaForm = ({ majstorId, onClose }) => {
+  const { user } = useContext(authContext); // Uzimanje korisnika iz konteksta
+  console.log("User from context:", user);
+  
   const [ratingValue, setRatingValue] = useState(null);
   const [comment, setComment] = useState("");
   const isDisabled = ratingValue === null || comment === "";
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
-    //ovde se posle pamti u bazi (api)
+    
+    if (!user) {
+      console.error("Korisnik nije prijavljen.");
+      return; // Ako korisnik nije prijavljen, obustavite proces
+    }
+
+    console.log(user._id);
+    try {
+      const response = await fetch(`${BASE_URL}/recenzije/recenzije/${majstorId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          majstor: majstorId,
+          korisnik: user._id, // Koristite korisnički ID iz konteksta
+          recenzijaText: comment,
+          ocena: ratingValue,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("Recenzija uspešno dodata:", data.data);
+        onClose(); // Zatvori formu
+      } else {
+        console.error("Greška pri dodavanju recenzije:", data.message);
+      }
+    } catch (error) {
+      console.error("Greška pri slanju recenzije:", error);
+    }
   };
+
   return (
     <Box
       sx={{
@@ -21,6 +53,8 @@ const RecenzijaForm = () => {
         display: "flex",
         justifyContent: "center",
       }}
+      component="form"
+      onSubmit={handleSubmitReview}
     >
       <Typography variant="h6">
         Kakvo je Vase iskustvo? Ocenite majstora i pomozite ostalima.
@@ -30,12 +64,13 @@ const RecenzijaForm = () => {
         maxRows={4}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-      ></TextField>
+      />
       <Rating
         value={ratingValue}
         onChange={(_, value) => setRatingValue(value)}
-      ></Rating>
+      />
       <Button disabled={isDisabled} 
+        type="submit" // Dodajte type="submit"
         variant="contained"
         sx={{
           backgroundColor: "#F0A500",

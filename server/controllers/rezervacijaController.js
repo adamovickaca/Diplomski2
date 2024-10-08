@@ -13,6 +13,7 @@ export const zakaziTermin = async (req, res) => {
       .status(400)
       .json({ success: false, message: "Svi podaci su obavezni." });
   }
+
   // Proverava da li je ID cene validan
   if (!mongoose.Types.ObjectId.isValid(cena)) {
     return res
@@ -20,7 +21,28 @@ export const zakaziTermin = async (req, res) => {
       .json({ success: false, message: "Nevažeći ID cene." });
   }
 
+  // Proverava da li je datum u budućnosti
+  const now = new Date();
+  if (new Date(datumRezervacije) < now) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Datum rezervacije mora biti u budućnosti." });
+  }
+
   try {
+    // Proveri da li već postoji rezervacija za dati termin
+    const existingReservation = await Rezervacija.findOne({
+      cena,
+      datumRezervacije,
+    });
+
+    if (existingReservation) {
+      return res.status(400).json({
+        success: false,
+        message: "Termin je već zauzet.",
+      });
+    }
+
     // Kreira novu rezervaciju
     const novaRezervacija = new Rezervacija({
       korisnik,
@@ -30,6 +52,7 @@ export const zakaziTermin = async (req, res) => {
 
     // Čuva rezervaciju u bazi
     await novaRezervacija.save();
+
     // Učitava cenu sa referencom na majstora
     const cenaUsluge = await CenaUsluge.findById(cena).populate("majstor");
 
@@ -39,6 +62,12 @@ export const zakaziTermin = async (req, res) => {
       // Ažurira polje zakazivanja u modelu Majstor
       await Majstor.findByIdAndUpdate(majstorId, {
         $push: { zakazivanja: novaRezervacija._id },
+        $pull: { termini: datumRezervacije }
+      });
+
+      // Ažurira korisnika dodavanjem rezervacije
+      await Korisnik.findByIdAndUpdate(korisnik, {
+        $push: { rezervacije: novaRezervacija._id },
       });
 
       // Učitava rezervaciju sa detaljima
@@ -52,29 +81,25 @@ export const zakaziTermin = async (req, res) => {
         },
       });
 
-      return res
-        .status(201)
-        .json({
-          success: true,
-          message: "Rezervacija uspešno dodata.",
-          rezervacija: rezervacijaSaDetaljima,
-        });
+      return res.status(201).json({
+        success: true,
+        message: "Rezervacija uspešno dodata.",
+        rezervacija: rezervacijaSaDetaljima,
+      });
     } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "Cena usluge nije pronađena." });
+      return res.status(404).json({ success: false, message: "Cena usluge nije pronađena." });
     }
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Greška prilikom dodavanja rezervacije.",
-        error: error.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Greška prilikom dodavanja rezervacije.",
+      error: error.message,
+    });
   }
 };
+
+
 
 export const vratiSveRezervacije = async (req, res) => {
   const { userId } = req; // pretpostavljamo da userId dolazi iz autentifikacije

@@ -1,9 +1,11 @@
 import React from "react";
-import { Card, CardContent, CardMedia, Typography, Box } from "@mui/material";
+import { Card, CardContent, CardMedia, Typography, Box, Button } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import cistacica from "../../assets/images/cistacica.jpg";
+import { useNavigate } from "react-router-dom";
 
 const MajstorCard = ({ majstor }) => {
+  const navigate = useNavigate(); // Inicijalizujte useNavigate
   const { ime, prezime, email, brTelefona, slika, adresa, grad, prosecnaOcena, sveOcene, bio } = majstor;
 
   return (
@@ -22,7 +24,7 @@ const MajstorCard = ({ majstor }) => {
       <CardMedia
         component="img"
         height="140"
-        image={cistacica}
+        image={slika || cistacica} // Koristi sliku iz objekta ili default sliku
         alt={ime}
       />
       <CardContent>
@@ -57,7 +59,7 @@ const MajstorCard = ({ majstor }) => {
               fontWeight: "bold",
             }}
           >
-            {"delatnost"}
+            {"delatnost"} {/* Možete zameniti sa stvarnom delatnošću */}
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
@@ -66,6 +68,14 @@ const MajstorCard = ({ majstor }) => {
         <Typography variant="body2" mt={1} color="text.secondary">
           {bio}
         </Typography>
+        {/* Dugme za navigaciju na MajstorPocetna */}
+        <Button
+          variant="contained"
+          sx={{ mt: 2, backgroundColor: "#F0A500", "&:hover": { backgroundColor: "#CF7500" } }}
+          onClick={() => navigate(`/majstor/${majstor._id}`)} // Zamenite sa tačnom putanjom
+        >
+          Vidi više
+        </Button>
       </CardContent>
     </Card>
   );

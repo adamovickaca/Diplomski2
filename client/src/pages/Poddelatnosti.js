@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL } from '../config.js';
 import Loading from '../components/LoadError/Loading';
 import ErrorMessage from '../components/LoadError/Error';
-import { Box, Typography, List, ListItem, ListItemText, Container, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, Grid, Container,Card, CardActions, CardContent, CardMedia, CircularProgress } from '@mui/material';
 
 const Poddelatnosti = () => {
   const { delatnostId } = useParams();
   const [poddelatnosti, setPoddelatnosti] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPoddelatnosti = async () => {
@@ -30,6 +32,10 @@ const Poddelatnosti = () => {
     fetchPoddelatnosti();
   }, [delatnostId]);
 
+  const handleMajstori = (id) => {
+    navigate(`/majstori/${id}`); // Navigira na stranicu poddelatnosti
+  };
+
   if (loading) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
       <CircularProgress /> {/* Prikazuje loading animaciju */}
@@ -43,16 +49,34 @@ const Poddelatnosti = () => {
       <Typography variant='h3' align="center" gutterBottom>
         Poddelatnosti 
       </Typography>
-      <List>
+      <Grid container spacing={1} justifyContent="center">
         {poddelatnosti.map((poddelatnost) => (
-          <ListItem 
-            key={poddelatnost._id} 
-            sx={{ border: '1px solid #ccc', borderRadius: '4px', mb: 2, padding: 2 }}
-          >
-            <ListItemText primary={poddelatnost.naziv} />
-          </ListItem>
+          <Grid item xs={12} sm={6} md={4} key={poddelatnost.id}>
+          <Card sx={{ maxWidth: 345, ml: 9, mt: 2, mb: 2 }}>
+            <CardMedia
+              sx={{ height: 140 }}
+              image={poddelatnost.slika || Image} // Koristi default sliku ako slika nije dostupna
+              title={poddelatnost.opis}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                {poddelatnost.naziv}
+              </Typography>
+             
+            </CardContent>
+            <CardActions>
+            <Button 
+                  size="small" 
+                  sx={{ color: "#CF7500" }} 
+                  onClick={() => handleMajstori(poddelatnost._id)} // Dodaj onClick handler
+                >
+                  Vidi majstore
+                </Button>
+            </CardActions>
+          </Card>
+        </Grid>
         ))}
-      </List>
+      </Grid>
     </Container>
   );
 };

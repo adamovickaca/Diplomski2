@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,22 +7,56 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, TextField, Button, Typography, styled } from "@mui/material";
-import { useState } from "react";
-import { FormControl, Select } from "@mui/material";
-import { MenuItem } from "@mui/material";
+import { Box, Typography, styled, Button, Modal } from "@mui/material";
+import { BASE_URL } from "../../../config";
+import ZakaziTermin from "../../Forma/ZakaziTermin";
 
-const SidePanel = () => {
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-  const rows = [
-    createData("Krecenje", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ];
+const SidePanel = ({ majstorId, role }) => {
+  const [cenaUsluga, setCenaUsluga] = useState([]);
+  const [error, setError] = useState(null);
+  const [zakaziTermin, setZakaziTermin] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+
+  useEffect(() => {
+    const fetchCeneUsluga = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/usluge/${majstorId}`);
+        const data = await response.json();
+        if (data.success) {
+          setCenaUsluga(data.data);
+        } else {
+          setError("Nema pronađenih cena usluga.");
+        }
+      } catch (error) {
+        console.error("Greška prilikom učitavanja cena usluga:", error);
+        setError("Greška prilikom učitavanja cena usluga.");
+      }
+    };
+
+    fetchCeneUsluga();
+  }, [majstorId]);
+
+  const handleDelete = async (id) => {
+    if (
+      window.confirm("Da li ste sigurni da želite da obrišete ovu cenu usluge?")
+    ) {
+      try {
+        const response = await fetch(`${BASE_URL}/usluge/${id}`, {
+          method: "DELETE",
+        });
+        const data = await response.json();
+        if (data.success) {
+          setCenaUsluga((prev) => prev.filter((c) => c._id !== id));
+        } else {
+          setError(data.message);
+        }
+      } catch (error) {
+        console.error("Greška prilikom brisanja cene usluge:", error);
+        setError("Greška prilikom brisanja cene usluge.");
+      }
+    }
+  };
+
   const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#F0A500",
@@ -31,15 +66,20 @@ const SidePanel = () => {
       fontSize: 14,
     },
   }));
+
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
     },
   }));
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
   return (
     <>
       <Typography variant="h4" sx={{ fontWeight: "bold" }}>
@@ -52,34 +92,95 @@ const SidePanel = () => {
               <TableRow>
                 <StyledTableCell>Usluga</StyledTableCell>
                 <StyledTableCell>Cena</StyledTableCell>
-                <StyledTableCell>Vreme(okvirno)</StyledTableCell>
-                <StyledTableCell></StyledTableCell>
-                <StyledTableCell></StyledTableCell>
+                <StyledTableCell>Tip cene</StyledTableCell>
+                {role === "majstor" && (
+                  <>
+                    <StyledTableCell></StyledTableCell>
+                    <StyledTableCell></StyledTableCell>
+                  </>
+                )}
+                {role === "korisnik" && (
+                  <>
+                    <StyledTableCell></StyledTableCell>
+                  </>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.id}>
+              {cenaUsluga.map((row) => (
+                <StyledTableRow key={row._id}>
                   <StyledTableCell component="th" scope="row">
-                    {row.name}
+                    {row.usluga}
                   </StyledTableCell>
-                  <StyledTableCell>{row.fat}</StyledTableCell>
-                  <StyledTableCell>{row.calories}</StyledTableCell>
-                  <StyledTableCell>
-                    <Button
-                      sx={{
-                        color: "#1A1C20",
-                        border: "1px",
-                        borderColor: "#ff8606",
-                      }}
-                    >
-                      {" "}
-                      Izmeni
-                    </Button>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Button sx={{ color: "#ff8606" }}> Obrisi</Button>
-                  </StyledTableCell>
+                  <StyledTableCell>{row.cena}</StyledTableCell>
+                  <StyledTableCell>{row.tipCene}</StyledTableCell>
+                  {role === "majstor" && (
+                    <>
+                      <StyledTableCell>
+                        <Button
+                          sx={{
+                            color: "#1A1C20",
+                            border: "1px",
+                            borderColor: "#ff8606",
+                          }}
+                          onClick={() => {
+                            // Logika za izmenu cene
+                          }}
+                        >
+                          Izmeni
+                        </Button>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Button
+                          sx={{ color: "#ff8606" }}
+                          onClick={() => handleDelete(row._id)} // Poziva funkciju za brisanje
+                        >
+                          Obriši
+                        </Button>
+                      </StyledTableCell>
+                    </>
+                  )}
+                  {role === "korisnik" && (
+                    <StyledTableCell>
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: "#F0A500", color: "white" }}
+                        onClick={() => {
+                          setSelectedService(row); // Setovanje id usluge
+                          setZakaziTermin(true); // Otvaranje modala
+                        }}
+                      >
+                        Zakazi
+                      </Button>
+                      {/* Modal for scheduling an appointment */}
+                      <Modal
+                        open={zakaziTermin}
+                        onClose={() => setZakaziTermin(false)}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            backgroundColor: "white",
+                            padding: 2,
+                            borderRadius: 1,
+                            width: "400px",
+                          }}
+                        >
+                          <ZakaziTermin
+                            onClose={() => setZakaziTermin(false)}
+                            onAdd={() => {
+                              // Function for refreshing data
+                            }}
+                            selectedService={selectedService} // Prosledi ID usluge
+                          />
+                        </Box>
+                      </Modal>
+                    </StyledTableCell>
+                  )}
                 </StyledTableRow>
               ))}
             </TableBody>

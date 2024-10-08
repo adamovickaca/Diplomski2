@@ -3,7 +3,7 @@ import {
     dodajCenuUsluge,
     vratiCeneUslugaZaMajstora,
     azurirajCenuUsluge,
-
+    obrisiCenuUsluge
 } from "../controllers/CenaUslugeController.js";
 
 const router = express.Router();
@@ -16,5 +16,7 @@ router.get('/:majstorId', vratiCeneUslugaZaMajstora);
 
 // Ruta za ažuriranje cene usluge
 router.put('/:cenaUslugeId', azurirajCenuUsluge);
+
+router.delete('/:cenaUslugeId', obrisiCenuUsluge);
 
 export default router;

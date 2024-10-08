@@ -37,6 +37,8 @@ export const register = async (req, res) => {
       user = await Korisnik.findOne({ email });
     } else if (role === "majstor") {
       user = await Korisnik.findOne({ email });
+    }else if (role === "admin") {
+      user = await Korisnik.findOne({ email });
     }
     
     if (user) {
@@ -46,7 +48,7 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(sifra, salt);
 
-    if (role === "korisnik") {
+    if (role === "korisnik" || role ==="admin") {
       user = new Korisnik({
         ime,
         prezime,
@@ -58,7 +60,7 @@ export const register = async (req, res) => {
         adresa,
         grad,
       });
-    }
+    } 
     if (role === "majstor") {
       user = new Majstor({
         ime,
