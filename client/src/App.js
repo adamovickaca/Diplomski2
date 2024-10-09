@@ -17,6 +17,8 @@ import ProtectedRoute from "./routes/ProtectedRoute.js";
 import BlogDetail from "./components/Blog/BlogDetail.js";
 import Poddelatnosti from "./pages/Poddelatnosti.js";
 import MajstoriList from "./pages/MajstoriList.js";
+import MajstorProfil from "./profili/majstor/MajstorProfil.js";
+
 function App() {
   return (
     <div className="App">
@@ -38,6 +40,7 @@ function App() {
           <Route path="/blog/:id" element={<BlogDetail />} /> {/* Define route for BlogDetail */}
           <Route path="/poddelatnosti/:delatnostId" element={<Poddelatnosti />} />
           <Route path="/majstori/:poddelatnostId" element={<MajstoriList />} /> {/* Dodajte ovu liniju */}
+          <Route path="/majstor/zahtevi" element={<MajstorProfil />} /> {/* Dodajte ovu liniju */}
 
           </Routes>
         <Footer/>

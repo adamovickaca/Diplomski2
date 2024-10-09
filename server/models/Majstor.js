@@ -30,7 +30,7 @@ const Majstor = new mongoose.Schema({
   grad: { type: String },
 
   //specificna polja za majstore
-  poddelatnost: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Poddelatnost' }],
+  poddelatnost: { type: mongoose.Schema.Types.ObjectId, ref: 'Poddelatnost' },
   kvalifikacija: { type: [String] },
   iskustvo: { type: [String] },
   bio: { type: String, maxLength: 50 },

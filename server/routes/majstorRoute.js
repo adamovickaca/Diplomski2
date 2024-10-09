@@ -10,7 +10,9 @@ import {
   filterMajstorPoddelatnost,
   getTermini,
   getTerminiZaDatum, 
-  izmeniTermin, obrisiTermin
+  izmeniTermin, obrisiTermin,
+  getZakazivanja,
+  getPrihvaceneRezervacijeMajstora
 } from "../controllers/majstorController.js";
 
 const router = express.Router();
@@ -44,6 +46,11 @@ router.get('/majstori/:id/termini', getTermini);
 router.get('/majstori/:id/termini/datum', getTerminiZaDatum);
 
 router.put('/majstor/:id/termin', izmeniTermin);
+
 router.delete('/majstor/:id/termin', obrisiTermin);
+
+router.get('/majstori/:id/zakazivanja', getZakazivanja); // Putanja za dobijanje zakazivanja
+
+router.get('/majstori/:majstorId/rezervacije/prihvacene', getPrihvaceneRezervacijeMajstora);
 
 export default router;

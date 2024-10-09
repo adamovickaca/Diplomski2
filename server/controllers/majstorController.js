@@ -172,6 +172,7 @@ export const majstorProfil = async (req, res) => {
   try {
     const majstor = await Majstor.findById(majstorId)
       .populate("recenzije") // Popunite recenzije
+      .populate("poddelatnost") // Popunite poddelatnost
       .exec();
     if (!majstor) {
       return res.status(404).json({
@@ -186,7 +187,7 @@ export const majstorProfil = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Profil",
-      data: { ...rest, zakazivanja },
+      data: { ...rest, zakazivanja, poddelatnost: majstor.poddelatnost },
     });
   } catch (error) {
     res.status(500).json({
@@ -321,9 +322,6 @@ export const izmeniTermin = async (req, res) => {
   }
 };
 
-
-
-
 // Izbriši termin
 export const obrisiTermin = async (req, res) => {
   const majstorId = req.params.id; // ID majstora iz URL-a
@@ -354,4 +352,67 @@ export const obrisiTermin = async (req, res) => {
   }
 };
 
+
+export const getZakazivanja = async (req, res) => {
+  const majstorId = req.params.id; // Uzimamo ID majstora iz URL-a
+
+  try {
+    // Pronalazi majstora po ID-u
+    const majstor = await Majstor.findById(majstorId).populate({
+      path: 'zakazivanja',
+      populate: {
+        path: 'korisnik', // Popuniti korisnika za svaku rezervaciju
+        select: '_id ime prezime email brTelefona' // Koje informacije o korisniku želiš da vratiš
+      }
+    });
+
+    if (!majstor) {
+      return res.status(404).json({ message: "Majstor nije pronađen" });
+    }
+
+    // Vraća zakazivanja sa informacijama o korisnicima
+    res.status(200).json({
+      success: true,
+      message: "Uspesno dobijena zakazivanja",
+      data: majstor.zakazivanja,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška prilikom dobijanja zakazivanja" });
+  }
+};
+
+
+export const getPrihvaceneRezervacijeMajstora = async (req, res) => {
+  const { majstorId } = req.params;
+
+  try {
+    // Pronađi majstora i učitaj njegove rezervacije
+    const majstor = await Majstor.findById(majstorId)
+      .populate({
+        path: 'zakazivanja',
+        match: { status: 'prihvacena' }, // Filtriraj samo prihvaćene rezervacije
+        populate: {
+          path: 'korisnik', // Popuni korisnika
+          select: 'ime prezime', // Vraćamo samo ime i prezime
+        },
+      });
+
+    if (!majstor) {
+      return res.status(404).json({ success: false, message: "Majstor nije pronađen!" });
+    }
+
+    const rezervacije = majstor.zakazivanja.map(rezervacija => ({
+      ime: rezervacija.korisnik.ime,
+      prezime: rezervacija.korisnik.prezime,
+      datum: rezervacija.datumRezervacije,
+      usluga: rezervacija.cena ? rezervacija.cena.naziv : 'Nema usluge', // Ako je potrebno
+    }));
+
+    return res.status(200).json({ success: true, rezervacije });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Greška prilikom dobijanja rezervacija', error: err.message });
+  }
+};
 

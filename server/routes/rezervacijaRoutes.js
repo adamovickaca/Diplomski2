@@ -3,7 +3,8 @@ import {
     zakaziTermin,
     vratiSveRezervacije,
     otkaziRezervaciju,
-    izmeniRezervaciju
+    izmeniRezervaciju,
+    izmeniStatusRezervacije
 
 } from "../controllers/rezervacijaController.js";
 
@@ -20,5 +21,8 @@ router.delete('/rezervacije/:rezervacijaId', otkaziRezervaciju);
 
 // Ruta za izmenu rezervacije
 router.put('/rezervacije/:rezervacijaId', izmeniRezervaciju);
+
+router.put('/rezervacija/:rezervacijaId/status', izmeniStatusRezervacije);
+
 
 export default router;

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../../../config.js";
 import { authContext } from "../../../context/authContext.js";
+import DodajUsluguModal from "../../Forma/DodajUsluguModal.js";
 
 const MajstorPocetna = () => {
   const { majstorId } = useParams();
@@ -18,8 +19,18 @@ const MajstorPocetna = () => {
   const [majstor, setMajstor] = useState(null);
   const [error, setError] = useState(null); // Dodavanje stanja za greške
   const navigate = useNavigate();
-
+  const [openAddServiceModal, setOpenAddServiceModal] = useState(false);
+  const [cenaUsluga, setCenaUsluga] = useState([]);
+  const {dispatch} = useContext(authContext);
   const { user, role } = useContext(authContext); // Dodaj role ovde
+
+  const handleAddService = (novaUsluga) => {
+    setCenaUsluga((prev) => [...prev, novaUsluga]);
+  };
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -101,7 +112,7 @@ const MajstorPocetna = () => {
                   mr: 1,
                 }}
               >
-                {"delatnost"} {/* Zamenite sa stvarnom delatnošću */}
+                {majstor.poddelatnost.naziv} {/* Zamenite sa stvarnom delatnošću */}
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 {majstor.ime} {majstor.prezime}
@@ -119,6 +130,21 @@ const MajstorPocetna = () => {
                 ({majstor.sveOcene})
               </Typography>
             </Box>
+            <Button
+                  onClick={handleLogout}
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#F0A500",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#CF7500",
+                    },
+                    mt: 2,
+                    mr: 2,
+                  }}
+                >
+                  Odjavi se
+                </Button>
           </Box>
         </Box>
 
@@ -168,7 +194,8 @@ const MajstorPocetna = () => {
       {/* Right panel with side options */}
       <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column" }}>
         <SidePanel majstorId={majstorId} role={role} sx={{ flexGrow: 1 }} />
-        <Box sx={{ width: "30%", alignContent: "center" }}>
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 5 }}>
+        { user && role === "korisnik" && (
           <Button
             variant="contained"
             sx={{
@@ -184,6 +211,8 @@ const MajstorPocetna = () => {
           >
             Zakazi termin
           </Button>
+        )}
+          { user && user._id === majstor._id && (
           <Button
             variant="contained"
             sx={{
@@ -198,6 +227,36 @@ const MajstorPocetna = () => {
           >
             Prikazi termine
           </Button>
+          )}
+          <Box>
+      {/* Dugme za otvaranje modala */}
+      { user && user._id === majstor._id && (
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: "#F0A500",
+          color: "white",
+          "&:hover": {
+            backgroundColor: "#CF7500",
+          },
+          mt: 2,
+        }}
+        onClick={() => setOpenAddServiceModal(true)}
+      >
+        Dodaj uslugu
+      </Button>
+      )}
+      {/* Modal za dodavanje usluge */}
+      <DodajUsluguModal
+        open={openAddServiceModal}
+        onClose={() => setOpenAddServiceModal(false)}
+        majstorId={majstorId}
+        poddelatnostId={majstor.poddelatnost._id}
+        onAddService={handleAddService}
+      />
+
+      {/* Ostatak tvoje komponente... */}
+    </Box>
         </Box>
       </Box>
 

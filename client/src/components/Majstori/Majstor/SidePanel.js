@@ -16,6 +16,8 @@ const SidePanel = ({ majstorId, role }) => {
   const [error, setError] = useState(null);
   const [zakaziTermin, setZakaziTermin] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [editServiceModal, setEditServiceModal] = useState(false);
+  const [editedService, setEditedService] = useState({});
 
   useEffect(() => {
     const fetchCeneUsluga = async () => {
@@ -54,6 +56,31 @@ const SidePanel = ({ majstorId, role }) => {
         console.error("Greška prilikom brisanja cene usluge:", error);
         setError("Greška prilikom brisanja cene usluge.");
       }
+    }
+  };
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/usluge/${editedService._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedService),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCenaUsluga((prev) =>
+          prev.map((service) =>
+            service._id === editedService._id ? { ...service, ...editedService } : service
+          )
+        );
+        setEditServiceModal(false);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      console.error("Greška prilikom ažuriranja cene usluge:", error);
+      setError("Greška prilikom ažuriranja cene usluge.");
     }
   };
 
@@ -124,7 +151,8 @@ const SidePanel = ({ majstorId, role }) => {
                             borderColor: "#ff8606",
                           }}
                           onClick={() => {
-                            // Logika za izmenu cene
+                             setEditedService(row);
+                             setEditServiceModal(true);
                           }}
                         >
                           Izmeni
@@ -183,6 +211,39 @@ const SidePanel = ({ majstorId, role }) => {
                   )}
                 </StyledTableRow>
               ))}
+               <Modal
+        open={editServiceModal}
+        onClose={() => setEditServiceModal(false)}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: "white",
+            padding: 2,
+            borderRadius: 1,
+            width: "400px",
+          }}
+        >
+          <Typography variant="h6">Izmeni cenu</Typography>
+          <input
+            type="text"
+            value={editedService.cena || ""}
+            onChange={(e) => setEditedService({ ...editedService, cena: e.target.value })}
+            placeholder="Cena"
+          />
+          <input
+            type="text"
+            value={editedService.tipCene || ""}
+            onChange={(e) => setEditedService({ ...editedService, tipCene: e.target.value })}
+            placeholder="Tip cene"
+          />
+          <Button onClick={handleUpdate}>Sačuvaj</Button>
+        </Box>
+      </Modal>
             </TableBody>
           </Table>
         </TableContainer>

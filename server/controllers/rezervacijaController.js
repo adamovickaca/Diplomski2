@@ -106,8 +106,14 @@ export const vratiSveRezervacije = async (req, res) => {
 
   try {
     const rezervacije = await Rezervacija.find({ user: userId })
-      .populate("majstor cena")
-      .exec();
+    .populate({
+      path: 'cena',
+      populate: {
+        path: 'majstor',
+        model: 'Majstor',
+      },
+    });
+
     return res.status(200).json({ success: true, data: rezervacije });
   } catch (err) {
     console.error(err);
@@ -213,5 +219,29 @@ export const izmeniRezervaciju = async (req, res) => {
         message: "Greška prilikom izmene rezervacije",
         error: err.message,
       });
+  }
+};
+
+export const izmeniStatusRezervacije = async (req, res) => {
+  const { rezervacijaId } = req.params;
+  const { status } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(rezervacijaId)) {
+    return res.status(400).json({ success: false, message: "Nevažeći ID rezervacije" });
+  }
+
+  try {
+    const rezervacija = await Rezervacija.findById(rezervacijaId);
+    if (!rezervacija) {
+      return res.status(404).json({ success: false, message: "Rezervacija nije pronađena" });
+    }
+
+    rezervacija.status = status;
+    await rezervacija.save();
+
+    return res.status(200).json({ success: true, message: "Status rezervacije uspešno izmenjen", rezervacija });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Greška prilikom izmene statusa rezervacije", error: err.message });
   }
 };
