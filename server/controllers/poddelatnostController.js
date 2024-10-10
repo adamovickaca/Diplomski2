@@ -25,10 +25,11 @@ export const dodajPoddelatnost = async (req, res) => {
     }
 
     // Kreira novu poddelatnost
+    console.log("Kreiranje poddelatnosti sa podacima:", { naziv, delatnost, slika });
+
     poddelatnost = new Poddelatnost({ naziv, delatnost, slika });
-    console.log("Naziv:", naziv);
+    console.log(naziv, delatnost, slika);
     await poddelatnost.save();
-    
 
     return res.status(201).json({ success: true, message: "Uspešno ste dodali poddelatnost!", poddelatnost });
   } catch (err) {

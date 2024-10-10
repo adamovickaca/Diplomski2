@@ -1,6 +1,7 @@
 import Rezervacija from "../models/Rezervacija.js";
 import Majstor from "../models/Majstor.js";
 import CenaUsluge from "../models/CenaUsluge.js";
+import Korisnik from "../models/Korisnik.js"
 
 import mongoose from "mongoose";
 
