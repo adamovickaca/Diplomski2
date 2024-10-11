@@ -1,5 +1,8 @@
+import { Admin } from "mongodb";
 import Majstor from "../models/Majstor.js";
 import mongoose from "mongoose";
+import Korisnik from "../models/Korisnik.js";
+
 
 export const odobriMajstora = async (req, res) => {
   const { majstorId } = req.params;
@@ -82,4 +85,17 @@ export const vratiMajstoreNaCekanju = async (req, res) => {
       return res.status(500).json({ success: false, message: "Greška prilikom vraćanja prihvaćenih majstora", error: err.message });
     }
   };
+  
+  export const getAdmin = async (req, res) => {
+    try {
+      const admin = await Korisnik.findOne({ role: "admin" }); // Vraća samo jednog admina
+      if (!admin) {
+        return res.status(404).json({ message: 'Admin not found' });
+      }
+      return res.status(200).json(admin);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error fetching admin', error });
+    }
+  };
+  
   

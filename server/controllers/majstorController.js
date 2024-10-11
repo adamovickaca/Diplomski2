@@ -360,10 +360,15 @@ export const getZakazivanja = async (req, res) => {
     // Pronalazi majstora po ID-u
     const majstor = await Majstor.findById(majstorId).populate({
       path: 'zakazivanja',
-      populate: {
+      populate: [
+      {
         path: 'korisnik', // Popuniti korisnika za svaku rezervaciju
         select: '_id ime prezime email brTelefona' // Koje informacije o korisniku želiš da vratiš
-      }
+      },
+      {
+        path: 'cena', // Popuniti podatke o ceni
+        select: '_id usluga' // Izaberi koje informacije o ceni želiš da vratiš
+      }]
     });
 
     if (!majstor) {

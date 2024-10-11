@@ -6,7 +6,7 @@ import Korisnik from "../models/Korisnik.js"
 import mongoose from "mongoose";
 
 export const zakaziTermin = async (req, res) => {
-  const { korisnik, cena, datumRezervacije } = req.body;
+  const { korisnik, cena, datumRezervacije, napomena } = req.body;
 
   // Proverava da li su potrebni podaci prisutni
   if (!korisnik || !cena || !datumRezervacije) {
@@ -49,6 +49,7 @@ export const zakaziTermin = async (req, res) => {
       korisnik,
       cena,
       datumRezervacije,
+      napomena
     });
 
     // Čuva rezervaciju u bazi
@@ -225,7 +226,7 @@ export const izmeniRezervaciju = async (req, res) => {
 
 export const izmeniStatusRezervacije = async (req, res) => {
   const { rezervacijaId } = req.params;
-  const { status } = req.body;
+  const { status, odgovor } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(rezervacijaId)) {
     return res.status(400).json({ success: false, message: "Nevažeći ID rezervacije" });
@@ -238,6 +239,10 @@ export const izmeniStatusRezervacije = async (req, res) => {
     }
 
     rezervacija.status = status;
+    if (odgovor) {
+      rezervacija.odgovorMajstora = odgovor;
+    }
+
     await rezervacija.save();
 
     return res.status(200).json({ success: true, message: "Status rezervacije uspešno izmenjen", rezervacija });

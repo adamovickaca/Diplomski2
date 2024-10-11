@@ -26,6 +26,15 @@ const RezervacijaSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    napomena: {
+      type: String,
+      default: '',
+    },
+    odgovorMajstora: {
+      type: String,
+      default: '',
+    },
+
   },
   { timestamps: true }
 );

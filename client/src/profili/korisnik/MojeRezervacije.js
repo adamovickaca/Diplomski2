@@ -21,7 +21,7 @@ const MojeRezervacije = () => {
                 <>
                     {Array.isArray(rezervacije) && rezervacije.length > 0 ? (
                         rezervacije.map(rezervacija => {
-                            const { status, datumRezervacije, cena, majstor } = rezervacija;
+                            const { status, datumRezervacije, cena, majstor, odgovorMajstora } = rezervacija;
                             return (
                                 <Box key={rezervacija._id} sx={{ border: '1px solid #ccc', padding: 2, marginBottom: 2 }}>
                                     <Typography variant="h6">{`${cena.majstor.ime} ${cena.majstor.prezime}`}</Typography>
@@ -29,6 +29,7 @@ const MojeRezervacije = () => {
                                     <Typography variant="body1">{`Datum: ${new Date(datumRezervacije).toLocaleString()}`}</Typography>
                                     <Typography variant="body1">{`Cena: ${cena.cena} RSD`}</Typography>
                                     <Typography variant="body1">{`Status: ${status}`}</Typography>
+                                    <Typography variant="body1">{`Odgovor majstora: ${odgovorMajstora}`}</Typography>
                                 </Box>
                             );
                         })

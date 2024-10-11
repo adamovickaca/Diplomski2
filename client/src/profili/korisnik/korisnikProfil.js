@@ -44,31 +44,20 @@ const KorisnikProfil = () => {
       {korisnikData && !loading && !error && (
         <>
           <Box sx={{ flex: 1, p: 2 }}>
-            <Box sx={{ display: "flex" }}>
-              <Box sx={{ flex: "0 0 auto", mr: 2 }}>
+          <Box sx={{ flex: 1, p: 2,  ml: 3, display: "flex", flexDirection: "column", mt:5 }}>
+          <Box sx={{ flex: "0 0 30%", mr: 2 }}>
                 <img
                   src={`${Image}?w=248&fit=crop&auto=format`}
                   alt="Preview"
                   loading="lazy"
                   style={{ width: "100%", maxWidth: "240px" }}
                 />
-              </Box>
-              <Box
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Box display="flex" flexDirection={"column"} alignItems="self-start" mb={1}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     {korisnikData?.ime} {korisnikData?.prezime}
                   </Typography>
-                  <Typography variant="body2">{korisnikData?.email}</Typography>
-                  <Typography variant="body2">{korisnikData?.brTelefona}</Typography>
-                  <Typography variant="body2">{korisnikData?.adresa}, {korisnikData?.grad}</Typography>
-                </Box>
+                  <Typography variant="h6">{korisnikData?.email}</Typography>
+                  <Typography variant="h6">{korisnikData?.brTelefona}</Typography>
+                  <Typography variant="h6">{korisnikData?.adresa}, {korisnikData?.grad}</Typography>
 
                 <Button
                   onClick={handleLogout}
@@ -89,8 +78,8 @@ const KorisnikProfil = () => {
             </Box>
           </Box>
 
-          <Box sx={{ flex: 1, ml: 2 }}>
-            <Box sx={{ flexDirection: "row", display: "flex", height: "10%" }}>
+          <Box sx={{ flex: 1, p:2, mr:10 }}>
+            <Box sx={{ flexDirection: "row", display: "flex", mt:2}}>
               <Button
                 onClick={() => setTab("rezervacije")}
                 variant="outlined"

@@ -12,6 +12,7 @@ import { BASE_URL } from "../../../config.js";
 import { authContext } from "../../../context/authContext.js";
 import DodajUsluguModal from "../../Forma/DodajUsluguModal.js";
 
+
 const MajstorPocetna = () => {
   const { majstorId } = useParams();
   const [value, setValue] = useState("podaci");
@@ -21,7 +22,7 @@ const MajstorPocetna = () => {
   const navigate = useNavigate();
   const [openAddServiceModal, setOpenAddServiceModal] = useState(false);
   const [cenaUsluga, setCenaUsluga] = useState([]);
-  const {dispatch} = useContext(authContext);
+  const { dispatch } = useContext(authContext);
   const { user, role } = useContext(authContext); // Dodaj role ovde
 
   const handleAddService = (novaUsluga) => {
@@ -35,6 +36,7 @@ const MajstorPocetna = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
 
   useEffect(() => {
     const fetchMajstori = async () => {
@@ -112,39 +114,41 @@ const MajstorPocetna = () => {
                   mr: 1,
                 }}
               >
-                {majstor.poddelatnost.naziv} {/* Zamenite sa stvarnom delatnošću */}
+                {majstor.poddelatnost.naziv}{" "}
+                {/* Zamenite sa stvarnom delatnošću */}
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 {majstor.ime} {majstor.prezime}
               </Typography>
-              <Typography variant="body2">{majstor.email}</Typography>
-              <Typography variant="body2">{majstor.brTelefona}</Typography>
-              <Typography variant="body2">{majstor.adresa}</Typography>
+              <Typography variant="h6">{majstor.email}</Typography>
+              <Typography variant="h6">{majstor.brTelefona}</Typography>
+              <Typography variant="h6">{majstor.adresa}</Typography>
             </Box>
             <Box display="flex" alignItems="center" mb={1}>
               <StarIcon style={{ color: "#ff8606" }} />
-              <Typography variant="body2" ml={0.5}>
+              <Typography variant="h6" ml={0.5}>
                 {majstor.prosecnaOcena}
               </Typography>
-              <Typography variant="body2" ml={1} color="text.secondary">
+              <Typography variant="h6" ml={1} color="text.secondary">
                 ({majstor.sveOcene})
               </Typography>
             </Box>
             <Button
-                  onClick={handleLogout}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#F0A500",
-                    color: "white",
-                    "&:hover": {
-                      backgroundColor: "#CF7500",
-                    },
-                    mt: 2,
-                    mr: 2,
-                  }}
-                >
-                  Odjavi se
-                </Button>
+              onClick={handleLogout}
+              variant="contained"
+              sx={{
+                backgroundColor: "#F0A500",
+                width: "150px",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#CF7500",
+                },
+                mt: 2,
+                mr: 2,
+              }}
+            >
+              Odjavi se
+            </Button>
           </Box>
         </Box>
 
@@ -156,6 +160,7 @@ const MajstorPocetna = () => {
             p: 2,
             borderRadius: "8px",
             boxShadow: 2,
+            width: "100vh",
           }}
         >
           <Tabs
@@ -190,77 +195,75 @@ const MajstorPocetna = () => {
           </Box>
         </Box>
       </Box>
-
       {/* Right panel with side options */}
       <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column" }}>
         <SidePanel majstorId={majstorId} role={role} sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex", flexDirection: "row", gap: 5 }}>
-        { user && role === "korisnik" && (
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#F0A500",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#CF7500",
-              },
-              mt: 2,
-              mr: 2,
-            }}
-            onClick={() => setZakaziTermin(true)}
-          >
-            Zakazi termin
-          </Button>
-        )}
-          { user && user._id === majstor._id && (
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#F0A500",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#CF7500",
-              },
-              mt: 2,
-            }}
-            onClick={() => navigate(`/termini/${majstorId}`)} // Promena rute
-          >
-            Prikazi termine
-          </Button>
+          {user && role === "korisnik" && (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#F0A500",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#CF7500",
+                },
+                mt: 2,
+                mr: 2,
+              }}
+              onClick={() => setZakaziTermin(true)}
+            >
+              Zakazi termin
+            </Button>
+          )}
+          {user && user._id === majstor._id && (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#F0A500",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#CF7500",
+                },
+                mt: 2,
+              }}
+              onClick={() => navigate(`/termini/${majstorId}`)} // Promena rute
+            >
+              Prikazi termine
+            </Button>
           )}
           <Box>
-      {/* Dugme za otvaranje modala */}
-      { user && user._id === majstor._id && (
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "#F0A500",
-          color: "white",
-          "&:hover": {
-            backgroundColor: "#CF7500",
-          },
-          mt: 2,
-        }}
-        onClick={() => setOpenAddServiceModal(true)}
-      >
-        Dodaj uslugu
-      </Button>
-      )}
-      {/* Modal za dodavanje usluge */}
-      <DodajUsluguModal
-        open={openAddServiceModal}
-        onClose={() => setOpenAddServiceModal(false)}
-        majstorId={majstorId}
-        poddelatnostId={majstor.poddelatnost._id}
-        onAddService={handleAddService}
-      />
+            {/* Dugme za otvaranje modala */}
+            {user && user._id === majstor._id && (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#F0A500",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#CF7500",
+                  },
+                  mt: 2,
+                }}
+                onClick={() => setOpenAddServiceModal(true)}
+              >
+                Dodaj uslugu
+              </Button>
+            )}
+            {/* Modal za dodavanje usluge */}
+            <DodajUsluguModal
+              open={openAddServiceModal}
+              onClose={() => setOpenAddServiceModal(false)}
+              majstorId={majstorId}
+              poddelatnostId={majstor.poddelatnost._id}
+              onAddService={handleAddService}
+            />
 
-      {/* Ostatak tvoje komponente... */}
-    </Box>
+            {/* Ostatak tvoje komponente... */}
+          </Box>
         </Box>
       </Box>
-
-      
+     
     </Box>
   );
 };

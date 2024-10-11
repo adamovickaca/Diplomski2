@@ -4,7 +4,8 @@ import {
  odbijMajstora,
  vratiSveMajstore,
  vratiMajstoreNaCekanju,
- vratiMajstorePrihvacene
+ vratiMajstorePrihvacene,
+ getAdmin
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -23,5 +24,7 @@ router.get('/majstori/nacekanju', vratiMajstoreNaCekanju);
 
 // Ruta za vraćanje prihvaćenih majstora
 router.get('/majstori/prihvaceni', vratiMajstorePrihvacene);
+
+router.get('/admin', getAdmin);
 
 export default router;

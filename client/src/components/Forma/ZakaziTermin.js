@@ -11,19 +11,20 @@ import {
 import React, { useState, useEffect } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useParams } from "react-router-dom";
-import {authContext} from "../../context/authContext.js"
+import { authContext } from "../../context/authContext.js";
 import { useContext } from "react";
 import { BASE_URL } from "../../config.js";
 
-const ZakaziTermin = ({ onClose, selectedService  }) => {
-  const { user } = useContext(authContext); 
+const ZakaziTermin = ({ onClose, selectedService }) => {
+  const { user } = useContext(authContext);
   const { majstorId } = useParams(); // Uzmi majstorId iz URL-a
   const [datum, setDatum] = useState(dayjs());
   const [slobodniTermini, setSlobodniTermini] = useState([]);
   const [izabranTermin, setIzabranTermin] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [napomena, setNapomena] = useState("");
 
   useEffect(() => {
     if (datum) {
@@ -34,10 +35,14 @@ const ZakaziTermin = ({ onClose, selectedService  }) => {
   const fetchSlobodniTermini = async (selectedDate) => {
     setLoading(true);
     try {
-      const response = await fetch(`${BASE_URL}/majstori/majstori/${majstorId}/termini/datum?datum=${selectedDate.format('YYYY-MM-DD')}`);
-      
+      const response = await fetch(
+        `${BASE_URL}/majstori/majstori/${majstorId}/termini/datum?datum=${selectedDate.format(
+          "YYYY-MM-DD"
+        )}`
+      );
+
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
@@ -65,18 +70,19 @@ const ZakaziTermin = ({ onClose, selectedService  }) => {
     const korisnik = user._id; // Zameni sa pravim ID korisnika
     const cena = selectedService._id; // Zameni sa pravim ID cene
     const datumRezervacije = izabranTermin; // ili new Date(izabranTermin)
-  
+
     try {
       const response = await fetch(`${BASE_URL}/rezervacije/rezervacije`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ korisnik, cena, datumRezervacije }),
+        body: JSON.stringify({ korisnik, cena, datumRezervacije, napomena }),
       });
-  
+
+      
       const data = await response.json();
-  
+
       if (data.success) {
         alert(data.message); // Prikazuje poruku o uspehu
         onClose(); // Zatvori modal
@@ -106,9 +112,11 @@ const ZakaziTermin = ({ onClose, selectedService  }) => {
             setSlobodniTermini([]); // Resetuj slobodne termine pri novom datumu
             setIzabranTermin(null); // Resetuj izabrani termin
           }}
-          renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 2 }} />}
+          renderInput={(params) => (
+            <TextField {...params} fullWidth sx={{ mb: 2 }} />
+          )}
         />
-        
+
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <CircularProgress />
@@ -116,14 +124,29 @@ const ZakaziTermin = ({ onClose, selectedService  }) => {
         ) : (
           <List>
             {slobodniTermini.map((termin, index) => (
-              <ListItem key={index} button onClick={() => setIzabranTermin(termin)}>
+              <ListItem
+                key={index}
+                button
+                onClick={() => setIzabranTermin(termin)}
+              >
                 <ListItemText primary={new Date(termin).toLocaleString()} />
               </ListItem>
             ))}
           </List>
         )}
+        <TextField
+          label="Posebne napomene"
+          value={napomena}
+          onChange={(e) => setNapomena(e.target.value)}
+          fullWidth
+          multiline
+          rows={4}
+          sx={{ mb: 2 }}
+        />
 
-        <Button variant="contained" onClick={zakazi}>Zakazi termin</Button>
+        <Button variant="contained" onClick={zakazi}>
+          Zakazi termin
+        </Button>
       </Box>
     </LocalizationProvider>
   );
