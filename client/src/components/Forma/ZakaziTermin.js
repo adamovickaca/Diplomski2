@@ -25,6 +25,25 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
   const [izabranTermin, setIzabranTermin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [napomena, setNapomena] = useState("");
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket(`ws://localhost:8080/${user._id}`);
+
+    newSocket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    newSocket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, [user._id]);
 
   useEffect(() => {
     if (datum) {
@@ -67,9 +86,9 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
       return;
     }
 
-    const korisnik = user._id; // Zameni sa pravim ID korisnika
-    const cena = selectedService._id; // Zameni sa pravim ID cene
-    const datumRezervacije = izabranTermin; // ili new Date(izabranTermin)
+    const korisnik = user._id;
+    const cena = selectedService._id;
+    const datumRezervacije = izabranTermin;
 
     try {
       const response = await fetch(`${BASE_URL}/rezervacije/rezervacije`, {
@@ -80,10 +99,16 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
         body: JSON.stringify({ korisnik, cena, datumRezervacije, napomena }),
       });
 
-      
       const data = await response.json();
-
       if (data.success) {
+        socket.send(
+          JSON.stringify({
+            action: "sendRequest",
+            recipientId: majstorId, // ID majstora
+            data: { details: "Imate novi zahtev za rezervaciju." },
+          })
+        );
+
         alert(data.message); // Prikazuje poruku o uspehu
         onClose(); // Zatvori modal
       } else {
@@ -98,7 +123,6 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 2 }}>
-        <Typography variant="body2">Slobodni termini:</Typography>
         {selectedService && (
           <Typography variant="h6" sx={{ mb: 2 }}>
             Izabrana usluga: {selectedService.usluga}
@@ -135,7 +159,7 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
           </List>
         )}
         <TextField
-          label="Posebne napomene"
+          label="Posebne napomene (dodatne informacije)"
           value={napomena}
           onChange={(e) => setNapomena(e.target.value)}
           fullWidth
@@ -144,8 +168,11 @@ const ZakaziTermin = ({ onClose, selectedService }) => {
           sx={{ mb: 2 }}
         />
 
-        <Button variant="contained" onClick={zakazi}>
+        <Button variant="outlined" onClick={zakazi}>
           Zakazi termin
+        </Button>
+        <Button variant="outlined" sx={{color:"#F0A500", borderColor:"#F0A500", ml:3}} onClick={onClose}>
+          Otkazi
         </Button>
       </Box>
     </LocalizationProvider>

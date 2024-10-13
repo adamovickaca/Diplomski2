@@ -72,7 +72,9 @@ export const filterMajstorIme = async (req, res) => {
       filter.ime = { $regex: ime, $options: "i" };
     }
 
-    const majstori = await Majstor.find(filter).select("-sifra");
+    const majstori = await Majstor.find(filter)
+    .populate("poddelatnost")
+    .select("-sifra");
 
     if (majstori.length === 0) {
       return res.status(404).json({
@@ -106,7 +108,9 @@ export const filterMajstorGrad = async (req, res) => {
       filter.grad = { $regex: grad, $options: "i" }; // Pretražuje po gradu
     }
 
-    const majstori = await Majstor.find(filter).select("-sifra");
+    const majstori = await Majstor.find(filter)
+    .populate("poddelatnost")
+    .select("-sifra");
 
     if (majstori.length === 0) {
       // Ako nema rezultata, vratite sve servisne pružatelje kao alternativu

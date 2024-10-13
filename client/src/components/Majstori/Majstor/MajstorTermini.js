@@ -154,7 +154,7 @@ const MajstorTermini = () => {
               <Typography>{new Date(termin).toLocaleString()}</Typography>
               <Box>
                 <Button variant="outlined" sx={{ml:3}}onClick={() => { setNoviTermin(termin); setTerminId(termin); setModalOpen(true); }}>Izmeni</Button>
-                <Button variant="outlined" sx={{ml:3}} color="error" onClick={() => handleObrisiTermin(termin)}>Izbriši</Button>
+                <Button variant="outlined" sx={{ml:3, color:"#ff8606", borderColor:"#ff8606"}}  onClick={() => handleObrisiTermin(termin)}>Izbriši</Button>
               </Box>
             </Box>
           ))}

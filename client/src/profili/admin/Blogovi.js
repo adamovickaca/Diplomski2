@@ -156,7 +156,6 @@ export default function Blogovi() {
                 <StyledTableCell>Naslov</StyledTableCell>
                 <StyledTableCell>Tagovi</StyledTableCell>
                 <StyledTableCell></StyledTableCell>
-                <StyledTableCell></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -167,12 +166,11 @@ export default function Blogovi() {
                   </StyledTableCell>
                   <StyledTableCell>{row.tag}</StyledTableCell>
                   <StyledTableCell>
-                    <Button onClick={() => handleOpenEdit(row)}>
+                    <Button variant="outlined" color="primary" onClick={() => handleOpenEdit(row)}>
                       Izmeni
                     </Button>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Button onClick={() => handleDeleteBlog(row._id)}>Obriši</Button>
+                 
+                    <Button variant="outlined" sx={{color:"#F0A500", borderColor:"#F0A500", ml:5}} onClick={() => handleDeleteBlog(row._id)}>Obriši</Button>
                   </StyledTableCell>
                 </TableRow>
               ))}

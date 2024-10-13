@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL } from '../config.js';
 import Loading from '../components/LoadError/Loading';
 import ErrorMessage from '../components/LoadError/Error';
 import DodajPoddelatnost from '../components/Forma/DodajPoddelatnost.js';
 import { Box, Button, Typography, Grid, Container, Card, CardActions, CardContent, CardMedia, CircularProgress } from '@mui/material';
+import { authContext } from '../context/authContext.js';
 
 const Poddelatnosti = () => {
   const { delatnostId } = useParams();
@@ -12,6 +13,7 @@ const Poddelatnosti = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const {user, role} = useContext(authContext);
 
   const navigate = useNavigate();
 
@@ -67,13 +69,16 @@ const Poddelatnosti = () => {
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <Container sx={{ mt: 15 }}>
+    <Container sx={{ mt: 15, minHeight:"100vh" }}>
       <Typography variant='h3' align="center" gutterBottom>
         Poddelatnosti 
       </Typography>
-      <Button variant="contained" onClick={() => setOpenModal(true)}>
+
+      {user && role === "admin" && (
+      <Button variant="contained" sx={{mb:2}} onClick={() => setOpenModal(true)}>
         Dodaj Poddelatnost
       </Button>
+      )}
       {openModal && (
         <DodajPoddelatnost
           onClose={() => setOpenModal(false)}
@@ -86,7 +91,7 @@ const Poddelatnosti = () => {
           <Grid item xs={12} sm={6} md={4} key={poddelatnost.id}>
             <Card sx={{ maxWidth: 345, ml: 9, mt: 2, mb: 2 }}>
               <CardMedia
-                sx={{ height: 140 }}
+                sx={{ height: 200 }}
                 image={poddelatnost.slika || Image}
                 title={poddelatnost.opis}
               />

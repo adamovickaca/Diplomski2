@@ -36,7 +36,28 @@ export default function ZahteviRezervacije() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [expanded, setExpanded] = useState({}); // Ovaj objekat će čuvati stanje proširenja za svaku rezervaciju
   const [odgovor, setOdgovor] = useState(""); // Stanje za odgovor majstora
- 
+  const [socket, setSocket] = useState(null);
+
+
+  useEffect(() => {
+    if (user && user._id) {
+   const newSocket = new WebSocket(`ws://localhost:8080/${user._id}`);
+
+    newSocket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    newSocket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };}
+  }, [user._id]);
+
   useEffect(() => {
     const fetchZahtevi = async () => {
       try {
@@ -88,7 +109,20 @@ export default function ZahteviRezervacije() {
         } else if (action === 'statusChange') {
           toast.success("Uspešno ste promenili status.");
         }
-  
+    
+      // Slanje obaveštenja korisniku putem WebSocket-a
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+          action: 'sendResponse',
+          recipientId: korisnik, // ID korisnika ili rezervacije
+          data: { details: "Dobili ste odgovor majstora." }
+        }));
+
+
+      } else {
+        console.error("WebSocket nije otvoren. Poruka nije poslata.");
+      }
+
       } else {
         const errorData = await response.json();
         console.error("Greška prilikom izmene statusa:", errorData.message);

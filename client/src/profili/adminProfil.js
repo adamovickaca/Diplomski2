@@ -138,11 +138,6 @@ export default function AdminPage() {
                 onClick={handleLogout}
                 variant="contained"
                 sx={{
-                  backgroundColor: "#F0A500",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "#CF7500",
-                  },
                   mt: 2,
                   mr: 2,
                 }}

@@ -112,17 +112,15 @@ export default function VerifikujMajstora() {
                 <StyledTableCell>{row.status}</StyledTableCell>
                 <StyledTableCell>
                   <Button 
-                    variant="contained" 
-                    color="primary" 
+                    variant="outlined" 
                     onClick={() => handleAccept(row._id)}
                   >
                     Prihvati
                   </Button>
                   <Button 
-                    variant="contained" 
-                    color="secondary" 
+                    variant="outlined" 
                     onClick={() => handleReject(row._id)}
-                    sx={{ ml: 2 }}
+                    sx={{ ml: 2, color:"#F0A500", borderColor:"#F0A500" }}
                   >
                     Odbij
                   </Button>

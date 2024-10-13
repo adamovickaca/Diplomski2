@@ -103,41 +103,45 @@ const MajstorPocetna = () => {
               alignItems="self-start"
               mb={1}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  backgroundColor: "#F0A500",
-                  color: "#1A1C20",
-                  py: 0.5,
-                  px: 2,
-                  fontWeight: "bold",
-                  mr: 1,
-                }}
-              >
-                {majstor.poddelatnost.naziv}{" "}
-                {/* Zamenite sa stvarnom delatnošću */}
-              </Typography>
+             
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 {majstor.ime} {majstor.prezime}
               </Typography>
               <Typography variant="h6">{majstor.email}</Typography>
               <Typography variant="h6">{majstor.brTelefona}</Typography>
               <Typography variant="h6">{majstor.adresa}</Typography>
+              <Typography
+  variant="h6"
+  sx={{
+    color: "#1976d2",
+    py: 0.5,
+    px: 2,
+    fontWeight: "bold",
+    border: "1px solid #1976d2", // Dodavanje ivice
+    borderRadius: "4px", // Opcionalno, za zaobljene ivice
+    mr: 1,
+  }}
+>
+  {majstor.poddelatnost.naziv}{" "}
+  {/* Zamenite sa stvarnom delatnošću */}
+</Typography>
+
             </Box>
             <Box display="flex" alignItems="center" mb={1}>
               <StarIcon style={{ color: "#ff8606" }} />
               <Typography variant="h6" ml={0.5}>
-                {majstor.prosecnaOcena}
+                {majstor.prosecnaOcena.toFixed(2)}
               </Typography>
               <Typography variant="h6" ml={1} color="text.secondary">
                 ({majstor.sveOcene})
               </Typography>
             </Box>
+            {user && role === "majstor" && (
             <Button
               onClick={handleLogout}
               variant="contained"
               sx={{
-                backgroundColor: "#F0A500",
+                backgroundColor: "#1976d2",
                 width: "150px",
                 color: "white",
                 "&:hover": {
@@ -149,6 +153,7 @@ const MajstorPocetna = () => {
             >
               Odjavi se
             </Button>
+            )}
           </Box>
         </Box>
 
@@ -171,8 +176,8 @@ const MajstorPocetna = () => {
                 color: "text.secondary",
               },
               "& .Mui-selected": {
-                borderBottom: "2px solid #F0A500",
-                color: "#F0A500",
+                borderBottom: "2px solid #1976d2",
+                color: "#1976d2",
               },
               "& .MuiTabs-indicator": {
                 backgroundColor: "transparent",
@@ -199,28 +204,12 @@ const MajstorPocetna = () => {
       <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column" }}>
         <SidePanel majstorId={majstorId} role={role} sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex", flexDirection: "row", gap: 5 }}>
-          {user && role === "korisnik" && (
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#F0A500",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#CF7500",
-                },
-                mt: 2,
-                mr: 2,
-              }}
-              onClick={() => setZakaziTermin(true)}
-            >
-              Zakazi termin
-            </Button>
-          )}
+         
           {user && user._id === majstor._id && (
             <Button
               variant="contained"
               sx={{
-                backgroundColor: "#F0A500",
+                backgroundColor: "#1976d2",
                 color: "white",
                 "&:hover": {
                   backgroundColor: "#CF7500",
@@ -229,7 +218,7 @@ const MajstorPocetna = () => {
               }}
               onClick={() => navigate(`/termini/${majstorId}`)} // Promena rute
             >
-              Prikazi termine
+              Dodaj termine
             </Button>
           )}
           <Box>
@@ -238,7 +227,7 @@ const MajstorPocetna = () => {
               <Button
                 variant="contained"
                 sx={{
-                  backgroundColor: "#F0A500",
+                  backgroundColor: "#1976d2",
                   color: "white",
                   "&:hover": {
                     backgroundColor: "#CF7500",

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const MajstorCard = ({ majstor }) => {
   const navigate = useNavigate(); // Inicijalizujte useNavigate
-  const { ime, prezime, email, brTelefona, slika, adresa, grad, prosecnaOcena, sveOcene, bio } = majstor;
+  const { ime, prezime, email, brTelefona, slika, adresa, grad, poddelatnost, prosecnaOcena, sveOcene, bio } = majstor;
 
   return (
     <Card
@@ -19,6 +19,7 @@ const MajstorCard = ({ majstor }) => {
         "&:hover": {
           transform: "scale(1.03)",
         },
+        width:"320px",
       }}
     >
       <CardMedia
@@ -40,7 +41,7 @@ const MajstorCard = ({ majstor }) => {
           <Box display="flex" alignItems="center">
             <StarIcon sx={{ color: "#ff8606" }} />
             <Typography variant="body2" ml={0.5}>
-              {prosecnaOcena}
+              {prosecnaOcena.toFixed(2)}
             </Typography>
             <Typography variant="body2" ml={1} color="text.secondary">
               ({sveOcene})
@@ -51,21 +52,22 @@ const MajstorCard = ({ majstor }) => {
           <Typography
             variant="body2"
             sx={{
-              backgroundColor: "#1A1C20",
-              color: "#b7a6b4",
+              color: "#1976d2",
               py: 0.5,
               px: 2,
-              borderRadius: "4px",
               fontWeight: "bold",
+              border: "1px solid #1976d2", // Dodavanje ivice
+              borderRadius: "4px", // Opcionalno, za zaobljene ivice
+              mr: 1,
             }}
           >
-            {"delatnost"} {/* Možete zameniti sa stvarnom delatnošću */}
+            {poddelatnost.naziv} {/* Možete zameniti sa stvarnom delatnošću */}
           </Typography>
         </Box>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" >
           {grad}
         </Typography>
-        <Typography variant="body2" mt={1} color="text.secondary">
+        <Typography variant="body2" mt={1} >
           {bio}
         </Typography>
         {/* Dugme za navigaciju na MajstorPocetna */}

@@ -22,13 +22,16 @@ const MajstorPodaci = ({ majstor, user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${BASE_URL}/majstori/majstor/${majstor._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${BASE_URL}/majstori/majstor/${majstor._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await response.json();
       if (data.success) {
         // Ako je ažuriranje uspešno, osveži podatke
@@ -43,35 +46,71 @@ const MajstorPodaci = ({ majstor, user }) => {
 
   return (
     <Box sx={{ textAlign: "left" }}>
-      <Typography style={textStyle} variant="h6">Podaci o majstoru:</Typography>
+      <Typography style={textStyle} variant="h6">
+        Podaci o majstoru:
+      </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Email:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Email:
+        </span>{" "}
         {majstor.email}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Broj telefona:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Broj telefona:
+        </span>{" "}
         {majstor.brTelefona}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Adresa:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Adresa:
+        </span>{" "}
         {majstor.adresa}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Grad:</span> {majstor.grad}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Grad:
+        </span>{" "}
+        {majstor.grad}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Kvalifikacija:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Kvalifikacija:
+        </span>{" "}
         {majstor.kvalifikacija}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Iskustvo:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Iskustvo:
+        </span>{" "}
         {majstor.iskustvo}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>Bio:</span> {majstor.bio}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          Bio:
+        </span>{" "}
+        {majstor.bio}
       </Typography>
       <Typography style={textStyle}>
-        <span style={{ color: "#F0A500", fontWeight: "bold", marginRight: "4px" }}>O majstoru:</span>{" "}
+        <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+        >
+          O majstoru:
+        </span>{" "}
         {majstor.oMajstoru}
       </Typography>
 
@@ -79,13 +118,13 @@ const MajstorPodaci = ({ majstor, user }) => {
       {user && user._id === majstor._id && (
         <Button
           variant="contained"
-          sx={{ marginTop: "16px", backgroundColor: "#F0A500", color: "white" }}
+          sx={{ marginTop: "16px", backgroundColor: "#1976d2", color: "white" }}
           onClick={() => setOpenIzmena(true)}
         >
           Izmeni
         </Button>
       )}
-      
+
       {/* Modal za izmenu */}
       <Modal
         open={openIzmena}
@@ -141,8 +180,21 @@ const MajstorPodaci = ({ majstor, user }) => {
               fullWidth
               margin="normal"
             />
-            <Button type="submit" variant="contained" color="primary" sx={{ marginTop: "16px" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: "16px" }}
+            >
               Sačuvaj izmene
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ marginTop: "16px", ml:5 }}
+              onClick={() => setOpenIzmena(false)} // Dodajte ovaj onClick
+            >
+              Otkazi
             </Button>
           </Box>
         </Box>

@@ -45,28 +45,26 @@ const DodajBlog = ({ onClose, onAdd, tags }) => {
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem",
-          backgroundColor: "white",
-          borderRadius: "8px",
-          boxShadow: 3,
-          gap: "1vh",
-          width: "500px",
-        }}
-      >
-        <form onSubmit={handleSubmit}>
+    component="form"
+    onSubmit={handleSubmit}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+      width: "40%",
+      height: "90%",
+      justifyContent: "center",
+      alignItems: "center",
+      margin: "auto", // Centriranje na horizontalnoj osi
+      position: "absolute", // Pozicija apsolutno
+      top: "50%", // 50% od vrha
+      left: "50%", // 50% od leve strane
+      transform: "translate(-50%, -50%)", // Pomeri na sredinu
+      backgroundColor: "white",
+      padding: 4,
+      boxShadow: 3,
+    }}
+  >
           <TextField
             label="Naslov"
             value={naslov}
@@ -177,41 +175,23 @@ const DodajBlog = ({ onClose, onAdd, tags }) => {
               </div>
             </div>
           </Box>
+          <Box sx={{flexDirection:"column"}}>
           <Button
             type="submit"
-            variant="contained"
-            sx={{
-              mt: 3,
-              mb: 2,
-              backgroundColor: "#1A1C20",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#3d353e",
-              },
-              width: "200px",
-            }}
+            variant="outlined"
+            color="primary"
+            
           >
             Dodaj Blog
           </Button>
           <Button
             onClick={onClose}
             variant="outlined"
-            sx={{
-              mt: 3,
-              mb: 2,
-              ml: 3,
-              backgroundColor: "#1A1C20",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#3d353e",
-              },
-              width: "200px",
-            }}
+            sx={{color:"#F0A500", borderColor:"#F0A500", ml:5}}
           >
             Otkaži
           </Button>
-        </form>
-      </Box>
+          </Box>
     </Box>
   );
 };

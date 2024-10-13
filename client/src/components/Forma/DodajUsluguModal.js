@@ -83,12 +83,19 @@ const DodajUsluguModal = ({ open, onClose, majstorId, poddelatnostId, onAddServi
           sx={{ mt: 2 }}
         />
         <Button
-          variant="contained"
-          sx={{ backgroundColor: "#F0A500", color: "white", mt: 2 }}
+          variant="outlined"
+          sx={{ mt: 2, mr:2 }}
           onClick={handleAddService}
         >
           Dodaj
         </Button>
+        <Button
+            variant="outlined"
+            sx={{  color: "#F0A500", borderColor:"#F0A500", mt: 2 }}
+            onClick={onClose} // Zatvara modal
+          >
+            Otkazi
+          </Button>
       </Box>
     </Modal>
   );

@@ -30,26 +30,38 @@ const DodajPoddelatnost = ({ onClose, onAdd, delatnostId }) => {
   };
 
   return (
-    <Box sx={{ padding: "2rem" }}>
-      <form onSubmit={handleSubmit}>
+    <Box
+    sx={{
+      padding: "2rem",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      //height: "100vh", // Puni visinu ekrana
+    }}
+  >
+    <form onSubmit={handleSubmit}>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 2 }}>
         <TextField
           label="Naziv"
           value={naziv}
           onChange={(e) => setNaziv(e.target.value)}
           required
-          fullWidth
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, maxWidth: "300px" }} // Postavi maxWidth na 300px
         />
         <input type="file" onChange={handleInputFile} accept=".jpg, .png" />
         {previewURL && <img src={previewURL} alt="Preview" style={{ width: "100px", margin: "10px 0" }} />}
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2, mr: 2 }}>
           Dodaj Poddelatnost
         </Button>
-        <Button onClick={onClose} variant="outlined" sx={{ mt: 2, ml: 2 }}>
+        <Button onClick={onClose} variant="outlined" sx={{ mt: 2 }}>
           Otkaži
         </Button>
-      </form>
-    </Box>
+      </Box>
+    </form>
+  </Box>
   );
 };
 

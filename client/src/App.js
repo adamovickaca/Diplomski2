@@ -40,7 +40,7 @@ function App() {
           <Route path="/blog/:id" element={<BlogDetail />} /> {/* Define route for BlogDetail */}
           <Route path="/poddelatnosti/:delatnostId" element={<Poddelatnosti />} />
           <Route path="/majstori/:poddelatnostId" element={<MajstoriList />} /> {/* Dodajte ovu liniju */}
-          <Route path="/majstor/zahtevi" element={<MajstorProfil />} /> {/* Dodajte ovu liniju */}
+          <Route path="/majstor/zahtevi"  element ={<ProtectedRoute allowedRoles={'majstor'}><MajstorProfil/></ProtectedRoute>} />
 
           </Routes>
         <Footer/>

@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, styled, Button, Modal } from "@mui/material";
+import { Box, Typography, styled, Button, Modal, TextField } from "@mui/material";
 import { BASE_URL } from "../../../config";
 import ZakaziTermin from "../../Forma/ZakaziTermin";
 
@@ -86,7 +86,7 @@ const SidePanel = ({ majstorId, role }) => {
 
   const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#F0A500",
+      backgroundColor: "#1976d2",
       color: "white",
     },
     [`&.${tableCellClasses.body}`]: {
@@ -145,11 +145,8 @@ const SidePanel = ({ majstorId, role }) => {
                     <>
                       <StyledTableCell>
                         <Button
-                          sx={{
-                            color: "#1A1C20",
-                            border: "1px",
-                            borderColor: "#ff8606",
-                          }}
+                          variant="outlined"
+                         
                           onClick={() => {
                              setEditedService(row);
                              setEditServiceModal(true);
@@ -160,7 +157,8 @@ const SidePanel = ({ majstorId, role }) => {
                       </StyledTableCell>
                       <StyledTableCell>
                         <Button
-                          sx={{ color: "#ff8606" }}
+                        variant="outlined"
+                          sx={{ color: "#ff8606", borderColor:"#ff8606" }}
                           onClick={() => handleDelete(row._id)} // Poziva funkciju za brisanje
                         >
                           Obriši
@@ -171,8 +169,8 @@ const SidePanel = ({ majstorId, role }) => {
                   {role === "korisnik" && (
                     <StyledTableCell>
                       <Button
-                        variant="contained"
-                        sx={{ backgroundColor: "#F0A500", color: "white" }}
+                        variant="outlined"
+                        sx={{ color: "#F0A500", borderColor: "#F0A500", }}
                         onClick={() => {
                           setSelectedService(row); // Setovanje id usluge
                           setZakaziTermin(true); // Otvaranje modala
@@ -211,39 +209,64 @@ const SidePanel = ({ majstorId, role }) => {
                   )}
                 </StyledTableRow>
               ))}
-               <Modal
-        open={editServiceModal}
-        onClose={() => setEditServiceModal(false)}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+              <Modal
+  open={editServiceModal}
+  onClose={() => setEditServiceModal(false)}
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  <Box
+    sx={{
+      backgroundColor: "white",
+      padding: 3,
+      borderRadius: 2,
+      width: "400px",
+      boxShadow: 3, // Dodajte senku
+    }}
+  >
+    <Typography variant="h6" sx={{ mb: 2 }}>
+      Izmeni cenu
+    </Typography>
+    <TextField
+      type="text"
+      value={editedService.cena || ""}
+      onChange={(e) => setEditedService({ ...editedService, cena: e.target.value })}
+      placeholder="Cena"
+      fullWidth
+      sx={{ mb: 2 }} // Razmak ispod
+    />
+    <TextField
+      type="text"
+      value={editedService.tipCene || ""}
+      onChange={(e) => setEditedService({ ...editedService, tipCene: e.target.value })}
+      placeholder="Tip cene"
+      fullWidth
+      sx={{ mb: 2 }} // Razmak ispod
+    />
+    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Button 
+        onClick={handleUpdate} 
+        variant="outlined" 
+        color="primary"
+        sx={{ width: "48%" }} // Širina dugmeta
       >
-        <Box
-          sx={{
-            backgroundColor: "white",
-            padding: 2,
-            borderRadius: 1,
-            width: "400px",
-          }}
-        >
-          <Typography variant="h6">Izmeni cenu</Typography>
-          <input
-            type="text"
-            value={editedService.cena || ""}
-            onChange={(e) => setEditedService({ ...editedService, cena: e.target.value })}
-            placeholder="Cena"
-          />
-          <input
-            type="text"
-            value={editedService.tipCene || ""}
-            onChange={(e) => setEditedService({ ...editedService, tipCene: e.target.value })}
-            placeholder="Tip cene"
-          />
-          <Button onClick={handleUpdate}>Sačuvaj</Button>
-        </Box>
-      </Modal>
+        Sačuvaj
+      </Button>
+      <Button 
+        onClick={() => setEditServiceModal(false)} 
+        variant="outlined" 
+        
+        sx={{ width: "48%" , color:"#F0A500", borderColor:"#F0A500" }} // Širina dugmeta
+      >
+        Otkaži
+      </Button>
+    </Box>
+  </Box>
+</Modal>
+
             </TableBody>
           </Table>
         </TableContainer>

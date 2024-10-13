@@ -145,7 +145,7 @@ const Majstori = () => {
               sx={{
                 backgroundColor: "#F0A500",
                 color: "white",
-                "&:hover": { backgroundColor: "#1A1C20" },
+                "&:hover": { backgroundColor: "#CF7500" },
                 ml: 5,
               }}
             >
@@ -175,7 +175,7 @@ const Majstori = () => {
               sx={{
                 backgroundColor: "#F0A500",
                 color: "white",
-                "&:hover": { backgroundColor: "#1A1C20" },
+                "&:hover": { backgroundColor: "#CF7500" },
                 ml: 5,
               }}
             >
@@ -205,7 +205,7 @@ const Majstori = () => {
               sx={{
                 backgroundColor: "#F0A500",
                 color: "white",
-                "&:hover": { backgroundColor: "#1A1C20" },
+                "&:hover": { backgroundColor: "#CF7500" },
                 ml: 5,
               }}
             >

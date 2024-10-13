@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Typography, Grid, Button, Grid2 } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Grid, Button, Grid2, Card, CardMedia, CardContent } from "@mui/material";
 import Image from "../assets/images/craftsman.jpg";
 import SearchIcon from "@mui/icons-material/Search";
 import HandymanSharpIcon from "@mui/icons-material/HandymanSharp";
@@ -24,8 +24,29 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { BASE_URL } from "../config";
 
 const HomePage = () => {
+  const [delatnosti, setDelatnosti] = useState([]);
+  const fetchDelatnosti = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/delatnosti/delatnosti`);
+      if (!response.ok) {
+        throw new Error("Greška prilikom učitavanja delatnosti");
+      }
+      const data = await response.json();
+      if (Array.isArray(data.data)) {
+        setDelatnosti(data.data);
+      } else {
+        console.error("Podaci nisu u ispravnom formatu");
+      }
+    } catch (error) {
+      console.error("Greška:", error.message);
+    } 
+  };
+  useEffect(() => {
+    fetchDelatnosti();
+  }, []);
   return (
     <Box>
       {/* Prva sekcija */}
@@ -64,7 +85,7 @@ const HomePage = () => {
               style={{ color: "#1A1C20" }}
             >
               Nađi
-              <span style={{ backgroundColor: "#1A1C20", color: "#F0A500" }}>
+              <span style={{ backgroundColor: "#1A1C20", color: "#1976d2" }}>
                 {" "}
                 Majstora{" "}
               </span>
@@ -185,22 +206,7 @@ const HomePage = () => {
             <Typography variant="body2">
               Najbolji majstori iz svih oblasti na jednom mestu.
             </Typography>
-            <Box
-              sx={{
-                display: "inline-block",
-                borderRadius: "50%",
-                border: "2px solid #F0A500",
-                padding: "6px",
-                transition: "background-color 0.3s, transform 0.3s",
-                "&:hover": {
-                  backgroundColor: "#1A1C20",
-                  transform: "scale(1.1)",
-                  color: "#F4F4F4",
-                },
-              }}
-            >
-              <ArrowForwardIcon sx={{ color: "#F0A500", fontSize: 30 }} />
-            </Box>
+         
           </Grid>
           <Grid item xs={12} sm={6} md={4} textAlign="center">
             {" "}
@@ -214,22 +220,7 @@ const HomePage = () => {
             <Typography variant="body2">
               Podeli svoje iskustvo i pomozi ostalima pri odabiru.
             </Typography>
-            <Box
-              sx={{
-                display: "inline-block",
-                borderRadius: "50%",
-                border: "2px solid #F0A500",
-                padding: "6px",
-                transition: "background-color 0.3s, transform 0.3s",
-                "&:hover": {
-                  backgroundColor: "#1A1C20",
-                  transform: "scale(1.1)",
-                  color: "#F4F4F4",
-                },
-              }}
-            >
-              <ArrowForwardIcon sx={{ color: "#F0A500", fontSize: 30 }} />
-            </Box>
+            
           </Grid>
           <Grid item xs={12} sm={6} md={4} textAlign="center">
             {" "}
@@ -241,22 +232,7 @@ const HomePage = () => {
             />
             <Typography variant="h5">Zakazi termin</Typography>
             <Typography variant="body2">Brzo i jednostavno.</Typography>
-            <Box
-              sx={{
-                display: "inline-block",
-                borderRadius: "50%",
-                border: "2px solid #F0A500",
-                padding: "6px",
-                transition: "background-color 0.3s, transform 0.3s",
-                "&:hover": {
-                  backgroundColor: "#1A1C20",
-                  transform: "scale(1.1)",
-                  color: "#F4F4F4",
-                },
-              }}
-            >
-              <ArrowForwardIcon sx={{ color: "#F0A500", fontSize: 30 }} />
-            </Box>{" "}
+            {" "}
           </Grid>
         </Grid>
       </Box>
@@ -264,16 +240,36 @@ const HomePage = () => {
       {/* Treća sekcija */}
       <Box
         sx={{
-          minHeight: "100vh",
+          minHeight: "120vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#E0E0E0",
+          flexDirection:"column"
         }}
       >
-        <Typography variant="h4">
-          Ovde ce spisak delatnosti (bez sliek)
-        </Typography>
+        <Typography variant="h3" sx={{mb:5}}>Delatnosti</Typography>
+       <Grid container spacing={1} justifyContent="center">
+        {delatnosti.map((item) => (
+          <Grid item xs={12} sm={6} md={4} key={item._id}>
+            <Card sx={{ maxWidth: 345, height:305, ml: 9, mt: 2, mb: 2 }}>
+              <CardMedia
+                sx={{ height: 140 }}
+                image={item.slika || Image}
+                title={item.opis}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {item.naziv}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {item.opis}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
       </Box>
 
       {/* Četvrta sekcija */}

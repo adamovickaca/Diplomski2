@@ -63,7 +63,7 @@ const KorisnikProfil = () => {
                   onClick={handleLogout}
                   variant="contained"
                   sx={{
-                    backgroundColor: "#F0A500",
+                    backgroundColor: "#1976d2",
                     color: "white",
                     "&:hover": {
                       backgroundColor: "#CF7500",
@@ -84,11 +84,11 @@ const KorisnikProfil = () => {
                 onClick={() => setTab("rezervacije")}
                 variant="outlined"
                 sx={{
-                  backgroundColor: tab === "rezervacije" ? "#F0A500" : "white",
-                  color: tab === "rezervacije" ? "white" : "#F0A500",
-                  borderColor: "#F0A500",
+                  backgroundColor: tab === "rezervacije" ? "#1976d2" : "white",
+                  color: tab === "rezervacije" ? "white" : "#1976d2",
+                  borderColor: "#1976d2",
                   "&:hover": {
-                    backgroundColor: tab === "rezervacije" ? "#F0A500" : "#F0A500",
+                    backgroundColor: tab === "rezervacije" ? "#1976d2" : "#1976d2",
                     color: "white",
                   },
                   mt: 2,
@@ -101,11 +101,11 @@ const KorisnikProfil = () => {
                 onClick={() => setTab("podesavanja")}
                 variant="outlined"
                 sx={{
-                  backgroundColor: tab === "podesavanja" ? "#F0A500" : "white",
-                  color: tab === "podesavanja" ? "white" : "#F0A500",
-                  borderColor: "#F0A500",
+                  backgroundColor: tab === "podesavanja" ? "#1976d2" : "white",
+                  color: tab === "podesavanja" ? "white" : "#1976d2",
+                  borderColor: "#1976d2",
                   "&:hover": {
-                    backgroundColor: tab === "podesavanja" ? "#F0A500" : "#F0A500",
+                    backgroundColor: tab === "podesavanja" ? "#1976d2" : "#1976d2",
                     color: "white",
                   },
                   mt: 2,

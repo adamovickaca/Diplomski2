@@ -69,7 +69,7 @@ const MajstorRecenzije = ({ majstorId, recenzije }) => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#F0A500",
+              backgroundColor: "#1976d2",
               color: "white",
               "&:hover": {
                 backgroundColor: "#CF7500",

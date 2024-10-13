@@ -14,9 +14,14 @@ const BlogDetail = () => {
   };
 
   return (
-    <Box sx={{ padding: '2rem', mt:20 }}>
-      <Typography variant="h4">{blog.naslov}</Typography>
-      <CardMedia component="img" height="300" image={blog.slika} alt={blog.naslov} />
+    <Box sx={{ padding: '2rem', mt:10 }}>
+      <Typography variant="h4" sx={{mb:4}}>{blog.naslov}</Typography>
+      <CardMedia 
+        component="img"  
+        image={blog.slika} 
+        alt={blog.naslov} 
+        sx={{ maxWidth: '400px', height: 'auto', margin: '0 auto' }} // Stil za smanjenje veličine slike
+      />
       <Typography variant="body1" sx={{ marginTop: '1rem' }}>
         {blog.tekst}
       </Typography>
