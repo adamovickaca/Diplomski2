@@ -12,7 +12,8 @@ import {
   getTerminiZaDatum, 
   izmeniTermin, obrisiTermin,
   getZakazivanja,
-  getPrihvaceneRezervacijeMajstora
+  getPrihvaceneRezervacijeMajstora,
+  filterZaAdmina
 } from "../controllers/majstorController.js";
 
 const router = express.Router();
@@ -52,5 +53,7 @@ router.delete('/majstor/:id/termin', obrisiTermin);
 router.get('/majstori/:id/zakazivanja', getZakazivanja); // Putanja za dobijanje zakazivanja
 
 router.get('/majstori/:majstorId/rezervacije/prihvacene', getPrihvaceneRezervacijeMajstora);
+
+router.get('/admin/filter/ime', filterZaAdmina );
 
 export default router;

@@ -201,7 +201,7 @@ const MajstorPocetna = () => {
         </Box>
       </Box>
       {/* Right panel with side options */}
-      <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column" }}>
+      <Box sx={{ flex: 1, ml: 2, display: "flex", flexDirection: "column", flexBasis:"55%" }}>
         <SidePanel majstorId={majstorId} role={role} sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex", flexDirection: "row", gap: 5 }}>
          
@@ -247,8 +247,6 @@ const MajstorPocetna = () => {
               poddelatnostId={majstor.poddelatnost._id}
               onAddService={handleAddService}
             />
-
-            {/* Ostatak tvoje komponente... */}
           </Box>
         </Box>
       </Box>

@@ -78,6 +78,7 @@ const PodesavanjaProfila = ({ korisnikPodaci }) => {
         // Samo ovde uzimamo JSON odgovor
         const jsonResponse = await res.json();
         toast.success(jsonResponse.message);
+    
         navigate("/korisnik/profil");
     } catch (error) {
         toast.error(error.message);

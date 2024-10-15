@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button, styled } from "@mui/material";
+import { Box, Button, styled, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { BASE_URL } from "../../config";
 import { useNavigate } from "react-router-dom"; // Uvezi useNavigate
@@ -23,12 +23,13 @@ const StyledTableCell = styled(TableCell)(() => ({
 
 export default function VerifikujMajstora() {
   const [majstori, setMajstori] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // Inicijalizuj useNavigate
 
   useEffect(() => {
     const fetchMajstori = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/admin/majstori/nacekanju`);
+        const response = await fetch(`${BASE_URL}/admin/majstori`);
         const data = await response.json();
 
         if (response.ok) {
@@ -44,6 +45,14 @@ export default function VerifikujMajstora() {
     fetchMajstori();
   }, []);
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  const filteredMajstori = searchTerm
+  ? majstori.filter((majstor) =>
+      `${majstor.ime} ${majstor.prezime}`.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : majstori; // Ako je searchTerm prazan, prikazuj sve majstore
   const handleAccept = async (id) => {
     try {
       const response = await fetch(`${BASE_URL}/admin/majstori/odobri/${id}`, {
@@ -92,6 +101,13 @@ export default function VerifikujMajstora() {
 
   return (
     <Box sx={{ overflowY: "auto", flexGrow: 1, p: 2, minHeight: "100vh" }}>
+        <TextField
+        label="Pretraži majstore"
+        variant="outlined"
+        value={searchTerm}
+        onChange={handleSearch}
+        sx={{ mb: 2 }} // Razmak ispod
+      />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -103,12 +119,12 @@ export default function VerifikujMajstora() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {majstori.map((row) => (
+            {filteredMajstori.map((row) => (
               <TableRow key={row._id}>
                 <StyledTableCell component="th" scope="row">
                   {row.ime} {row.prezime}
                 </StyledTableCell>
-                <StyledTableCell>{row.poddelatnost[0]?.naziv || "N/A"}</StyledTableCell>
+                <StyledTableCell>{row.poddelatnost.naziv || "N/A"}</StyledTableCell>
                 <StyledTableCell>{row.status}</StyledTableCell>
                 <StyledTableCell>
                   <Button 

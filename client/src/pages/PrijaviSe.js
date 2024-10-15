@@ -159,7 +159,7 @@ const PrijaviSe = () => {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <NavLink style={{ color: "#F0A500" }} to="/register">
+              <NavLink style={{ color: "#F0A500" }} to="/signin">
                 {"Nemate nalog? Registrujte se"}
               </NavLink>
             </Grid>

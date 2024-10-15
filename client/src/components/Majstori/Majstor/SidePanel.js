@@ -118,6 +118,7 @@ const SidePanel = ({ majstorId, role }) => {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Usluga</StyledTableCell>
+                <StyledTableCell>Opis</StyledTableCell>
                 <StyledTableCell>Cena</StyledTableCell>
                 <StyledTableCell>Tip cene</StyledTableCell>
                 {role === "majstor" && (
@@ -138,6 +139,9 @@ const SidePanel = ({ majstorId, role }) => {
                 <StyledTableRow key={row._id}>
                   <StyledTableCell component="th" scope="row">
                     {row.usluga}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row.opis}
                   </StyledTableCell>
                   <StyledTableCell>{row.cena}</StyledTableCell>
                   <StyledTableCell>{row.tipCene}</StyledTableCell>
@@ -182,10 +186,12 @@ const SidePanel = ({ majstorId, role }) => {
                       <Modal
                         open={zakaziTermin}
                         onClose={() => setZakaziTermin(false)}
+                        
                         sx={{
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          
                         }}
                       >
                         <Box

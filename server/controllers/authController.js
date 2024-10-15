@@ -84,6 +84,7 @@ export const register = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Uspesno ste se registrovali!" });
   } catch (err) {
+    console.error(err); // Dodaj ovu liniju
     res.status(500).json({
       success: false,
       message: "Neuspesno, pokusajte ponovo",

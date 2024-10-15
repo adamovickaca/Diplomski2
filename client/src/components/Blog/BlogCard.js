@@ -21,12 +21,12 @@ const BlogCard = ({ blog }) => {
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader title={naslov} subheader={tag} />
       <CardMedia component="img" height="194" image={slika} alt={naslov} />
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="body2" color="text.secondary">
           {kratakOpis}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions sx={{ justifyContent: 'center' }}>
         <Button onClick={handleLearnMore} color="primary">
           Saznaj više
         </Button>

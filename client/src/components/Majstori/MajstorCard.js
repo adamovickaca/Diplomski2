@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const MajstorCard = ({ majstor }) => {
   const navigate = useNavigate(); // Inicijalizujte useNavigate
-  const { ime, prezime, email, brTelefona, slika, adresa, grad, poddelatnost, prosecnaOcena, sveOcene, bio } = majstor;
+  const { ime, prezime, email, brTelefona, slika, adresa, grad, poddelatnost, prosecnaOcena, sveOcene, bio, oMajstoru } = majstor;
 
   return (
     <Card
@@ -65,7 +65,7 @@ const MajstorCard = ({ majstor }) => {
           </Typography>
         </Box>
         <Typography variant="body2" >
-          {grad}
+        <strong>{grad}</strong>
         </Typography>
         <Typography variant="body2" mt={1} >
           {bio}
@@ -73,7 +73,7 @@ const MajstorCard = ({ majstor }) => {
         {/* Dugme za navigaciju na MajstorPocetna */}
         <Button
           variant="contained"
-          sx={{ mt: 2, backgroundColor: "#F0A500", "&:hover": { backgroundColor: "#CF7500" } }}
+          sx={{  mt: 4, backgroundColor: "#F0A500", "&:hover": { backgroundColor: "#CF7500" } }}
           onClick={() => navigate(`/majstor/${majstor._id}`)} // Zamenite sa tačnom putanjom
         >
           Vidi više

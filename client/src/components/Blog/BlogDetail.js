@@ -14,7 +14,7 @@ const BlogDetail = () => {
   };
 
   return (
-    <Box sx={{ padding: '2rem', mt:10 }}>
+    <Box sx={{ padding: '2rem', mt:10, minHeight:"100vh" }}>
       <Typography variant="h4" sx={{mb:4}}>{blog.naslov}</Typography>
       <CardMedia 
         component="img"  

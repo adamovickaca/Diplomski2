@@ -425,3 +425,40 @@ export const getPrihvaceneRezervacijeMajstora = async (req, res) => {
   }
 };
 
+export const filterZaAdmina = async (req, res) => {
+  try {
+    const { ime } = req.query;
+    console.log("Query Params:", { ime });
+
+    // Definišite filter kao prazan objekat
+    let filter = {};
+
+    // Ako je ime prosleđeno, dodajte regex filter
+    if (ime) {
+      filter.ime = { $regex: ime, $options: "i" }; // Pretpostavljam da se 'ime' odnosi na polje u bazi
+    }
+
+    const majstori = await Majstor.find(filter)
+      .populate("poddelatnost")
+      .select("-sifra");
+
+    if (majstori.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Ne postoje majstori sa datim imenom!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Found",
+      data: majstori,
+    });
+  } catch (err) {
+    console.error("Error in filterMajstorIme:", err);
+    res.status(500).json({
+      success: false,
+      message: "Greška, pokušajte ponovo",
+    });
+  }
+};

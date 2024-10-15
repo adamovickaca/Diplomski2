@@ -97,19 +97,19 @@ const MajstorPodaci = ({ majstor, user }) => {
         </span>{" "}
         {majstor.iskustvo}
       </Typography>
-      <Typography style={textStyle}>
-        <span
-          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+      <Typography style={{ ...textStyle, display: "flex" }}>
+      <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "10px",  }}
         >
           Bio:
         </span>{" "}
         {majstor.bio}
       </Typography>
-      <Typography style={textStyle}>
-        <span
-          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "4px" }}
+      <Typography style={{ ...textStyle, display: "flex" }}>
+      <span
+          style={{ color: "#1976d2", fontWeight: "bold", marginRight: "14px",}}
         >
-          O majstoru:
+          Informacije:
         </span>{" "}
         {majstor.oMajstoru}
       </Typography>
@@ -176,6 +176,14 @@ const MajstorPodaci = ({ majstor, user }) => {
               name="adresa"
               label="Adresa"
               value={formData.adresa}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              name="grad"
+              label="Grad"
+              value={formData.grad}
               onChange={handleChange}
               fullWidth
               margin="normal"

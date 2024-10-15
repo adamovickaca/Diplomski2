@@ -33,7 +33,7 @@ const Majstor = new mongoose.Schema({
   poddelatnost: { type: mongoose.Schema.Types.ObjectId, ref: 'Poddelatnost' },
   kvalifikacija: { type: [String] },
   iskustvo: { type: [String] },
-  bio: { type: String, maxLength: 50 },
+  bio: { type: String, maxLength: 500 },
   oMajstoru: { type: String },
   termini: { type: [Date] },
   recenzije: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recenzija' }],

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { authContext } from "../../context/authContext";
 import {
   AppBar,
@@ -32,15 +32,29 @@ const pages = [
 ];
 
 const Navbar = () => {
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(undefined);
+  const { pathname } = useLocation(); // Uvezi useLocation
   const [anchorEl, setAnchorEl] = useState(null);
   const [socket, setSocket] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  
 
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { user, role, token } = useContext(authContext);
+
+  useEffect(() => {
+    // Postavi value na undefined kada si na profilu
+    if (pathname.includes("profil") || pathname.includes("zahtevi")) {
+      setValue(undefined);
+    } else {
+      // Na osnovu pathname-a postavi value
+      const pageIndex = pages.findIndex(page => pathname.includes(page.link));
+      setValue(pageIndex !== -1 ? pageIndex : undefined);
+    }
+  }, [pathname]);
+
 
   useEffect(() => {
     if (user && user._id) {
@@ -105,12 +119,13 @@ const Navbar = () => {
                 value={value}
                 onChange={(e, value) => setValue(value)}
               >
-                {pages.map((page) => (
+                {pages.map((page, index) => (
                   <Tab
                     key={page.val}
                     label={page.val}
                     to={page.link}
                     component={Link}
+                    onClick={() => setValue(index)}
                   />
                 ))}
               </Tabs>

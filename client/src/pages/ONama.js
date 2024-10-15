@@ -119,7 +119,7 @@ const ONama = () => {
           {/* Prva statistika */}
           <Box sx={{ margin: "0 auto", textAlign: "center" }}>
             <HandymanSharpIcon sx={{ color: "#F4F4F4" }} />
-            <Typography style={{ color: "#F4F4F4" }}>8</Typography>
+            <Typography style={{ color: "#F4F4F4" }}>8+</Typography>
             <Typography style={{ color: "#F4F4F4" }}>
               Različitih delatnosti
             </Typography>
@@ -127,7 +127,7 @@ const ONama = () => {
           {/* Druga statistika */}
           <Box sx={{ margin: "0 auto", textAlign: "center" }}>
             <AccountCircleIcon sx={{ color: "#F4F4F4" }} />
-            <Typography style={{ color: "#F4F4F4" }}>15</Typography>
+            <Typography style={{ color: "#F4F4F4" }}>10+</Typography>
             <Typography style={{ color: "#F4F4F4" }}>
               Registrovanih korisnika
             </Typography>
@@ -135,7 +135,7 @@ const ONama = () => {
           {/* Treća statistika */}
           <Box sx={{ margin: "0 auto", textAlign: "center" }}>
             <HomeRepairServiceIcon sx={{ color: "#F4F4F4" }} />
-            <Typography style={{ color: "#F4F4F4" }}>20</Typography>
+            <Typography style={{ color: "#F4F4F4" }}>10+</Typography>
             <Typography style={{ color: "#F4F4F4" }}>
               Registrovanih majstora
             </Typography>
@@ -143,7 +143,7 @@ const ONama = () => {
           {/* Četvrta statistika */}
           <Box sx={{ margin: "0 auto", textAlign: "center" }}>
             <ReviewsIcon sx={{ color: "#F4F4F4" }} />
-            <Typography style={{ color: "#F4F4F4" }}>10</Typography>
+            <Typography style={{ color: "#F4F4F4" }}>10+</Typography>
             <Typography style={{ color: "#F4F4F4" }}>
               Recenzija i ocena
             </Typography>

@@ -9,7 +9,7 @@ const MojeRezervacije = () => {
     const { data: rezervacije, loading, error } = useFetchData(`${BASE_URL}/korisnik/rezervacije`);
 
     return (
-        <Box>
+        <Box sx={{minHeight:"100vh"}}>
             {/* Loading state */}
             {loading && <Loading />}
             
